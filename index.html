@@ -567,4 +567,21 @@
   const videoEl  = document.getElementById('cameraFeed');
   const camStart = document.getElementById('camStart');
   const camLabel = document.getElementById('camLabel');
-  const
+  const vw = videoEl.videoWidth, vh = videoEl.videoHeight;
+const targetAspect = vfEl.clientWidth / vfEl.clientHeight;
+const videoAspect  = vw / vh;
+let sx, sy, sw, sh;
+if(videoAspect > targetAspect){ sh = vh; sw = vh * targetAspect; sx = (vw - sw)/2; sy = 0; }
+else { sw = vw; sh = vw / targetAspect; sx = 0; sy = (vh - sh)/2; }
+
+const canvas = document.createElement('canvas');
+canvas.width = Math.round(sw); canvas.height = Math.round(sh);
+const ctx = canvas.getContext('2d');
+if(camFacing === 'user'){ ctx.translate(canvas.width, 0); ctx.scale(-1, 1); }
+ctx.drawImage(videoEl, sx, sy, sw, sh, 0, 0, canvas.width, canvas.height);
+
+const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
+shotImg.src = dataUrl;
+lastShotFile = dataURLtoFile(dataUrl, '픽스쳐_' + currentSpot + '_' + Date.now() + '.jpg');
+
+setTimeout(()=>resultEl.classList.add('open'), 180);
