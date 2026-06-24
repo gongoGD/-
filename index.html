@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>충청 픽스쳐 · 청남대 데크길 포토 가이드</title>
+<title>대전 어드벤처 픽스쳐</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
 <style>
   :root{
@@ -17,9 +17,7 @@
     --txt:#f2f4f5;
     --txt-dim:#9aa0a6;
   }
-
   *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-
   body{
     font-family:"Pretendard","Pretendard Variable",-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
     background:
@@ -30,7 +28,6 @@
     display:flex;align-items:center;justify-content:center;
     padding:24px 12px;
   }
-
   /* ===== 폰 프레임 ===== */
   .phone{
     position:relative;
@@ -42,8 +39,7 @@
     display:flex;flex-direction:column;
     overflow:hidden;
   }
-
-  /* ===== 헤더 (단일 항목 · 고정 타이틀) ===== */
+  /* ===== 헤더 ===== */
   .header{
     flex-shrink:0;
     display:flex;align-items:center;justify-content:space-between;
@@ -51,38 +47,15 @@
     background:linear-gradient(180deg,#1b1e22 0%,var(--bg-phone) 100%);
   }
   .title-wrap{display:flex;flex-direction:column;gap:2px;min-width:0;}
-  .title{font-size:15.5px;font-weight:700;letter-spacing:-0.3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .close-btn{
-    width:30px;height:30px;border-radius:50%;border:none;
-    background:var(--bg-elev);color:var(--txt-dim);
-    font-size:18px;line-height:1;cursor:pointer;transition:.18s;flex-shrink:0;margin-left:10px;
-  }
-  .close-btn:hover{background:#34383e;color:var(--txt);}
-
-  /* ===== 촬영 정보 바 (장소 아래) ===== */
-  .info-bar{
-    flex-shrink:0;
-    display:flex;align-items:stretch;gap:8px;
-    padding:0 16px 12px;background:var(--bg-phone);
-  }
-  .info-item{
-    flex:1;min-width:0;
-    display:flex;flex-direction:column;gap:3px;
-    background:var(--bg-panel);border:1px solid var(--line);border-radius:10px;
-    padding:8px 10px;
-  }
-  .info-label{font-size:10px;color:var(--txt-dim);font-weight:600;display:flex;align-items:center;gap:4px;white-space:nowrap;}
-  .info-value{font-size:12.5px;color:var(--neon-soft);font-weight:700;letter-spacing:-.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-
+  .title{font-size:15.5px;font-weight:700;}
   /* ===== 스크롤 본문 ===== */
   .scroll{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;scrollbar-width:thin;scrollbar-color:#3a3f45 transparent;}
   .scroll::-webkit-scrollbar{width:6px;}
   .scroll::-webkit-scrollbar-thumb{background:#3a3f45;border-radius:3px;}
-
   /* ===== 뷰파인더 ===== */
   #viewfinder{
     position:relative;width:100%;
-    aspect-ratio:9 / 16;            /* 기본: 세로 16:9 */
+    aspect-ratio:9 / 16;
     background-color:#0e1a10;
     background-image:
       linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.05) 40%, rgba(0,0,0,0.45) 100%),
@@ -90,7 +63,6 @@
     background-size:cover;background-position:center;
     transition:aspect-ratio 0.3s ease;overflow:hidden;
   }
-
   /* 라이브 카메라 */
   #cameraFeed{
     position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
@@ -98,7 +70,6 @@
   }
   #cameraFeed.live{display:block;}
   #cameraFeed.mirror{transform:scaleX(-1);}
-
   /* 카메라 시작 / 상태 안내 */
   .cam-start{
     position:absolute;inset:0;z-index:7;
@@ -115,14 +86,6 @@
     font-size:13px;font-weight:700;color:#fff;background:rgba(0,0,0,0.5);
     padding:7px 15px;border-radius:999px;max-width:82%;text-align:center;line-height:1.45;
   }
-  .cam-start .cam-sub{font-size:11px;color:#d2d6da;max-width:80%;text-align:center;line-height:1.45;}
-  .cam-copy{
-    margin-top:6px;border:1px solid rgba(255,255,255,0.45);background:rgba(255,255,255,0.14);
-    color:#fff;font-size:12px;font-weight:700;padding:9px 16px;border-radius:999px;cursor:pointer;
-    backdrop-filter:blur(2px);display:none;
-  }
-  .cam-copy:active{transform:scale(0.96);}
-
   /* 전/후면 전환 */
   .cam-flip{
     position:absolute;top:12px;right:12px;z-index:8;width:38px;height:38px;
@@ -130,63 +93,6 @@
     cursor:pointer;display:none;backdrop-filter:blur(2px);
   }
   .cam-flip.show{display:block;}
-
-  /* 팁 토글(!) 버튼 — 우측 하단 */
-  .tip-btn{
-    position:absolute;bottom:14px;right:14px;z-index:9;
-    width:40px;height:40px;border:none;border-radius:50%;
-    background:rgba(0,0,0,0.55);color:#ffd54a;font-size:21px;font-weight:800;
-    cursor:pointer;backdrop-filter:blur(2px);
-    display:flex;align-items:center;justify-content:center;
-    box-shadow:0 2px 10px rgba(0,0,0,0.4);
-    animation:tipPulse 2.2s ease-in-out infinite;
-  }
-  @keyframes tipPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,213,74,0.5);}50%{box-shadow:0 0 0 9px rgba(255,213,74,0);}}
-  .tip-btn.active{background:var(--neon);color:#0a0f07;animation:none;}
-
-  /* 팁 카드 — 기본 숨김, 토글 시 표시 */
-  #tip-card{
-    position:absolute;bottom:64px;left:50%;transform:translateX(-50%) translateY(8px);
-    width:86%;background:rgba(0,0,0,0.8);backdrop-filter:blur(4px);
-    border:1px solid rgba(255,255,255,0.12);border-radius:12px;
-    padding:12px 14px;color:#fff;font-size:12.5px;line-height:1.5;
-    z-index:10;display:flex;gap:8px;align-items:flex-start;
-    opacity:0;visibility:hidden;pointer-events:none;transition:.25s;
-  }
-  #tip-card.show{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0);}
-  #tip-card .bulb{flex:0 0 auto;font-size:14px;line-height:1.3;}
-
-  /* 투명 가이드 레이어 */
-  .guides{position:absolute;inset:0;pointer-events:none;z-index:2;}
-
-  /* 흰색 소실점 가이드선 (데크길 perspective) */
-  .vp-svg{position:absolute;inset:0;width:100%;height:100%;}
-  .vp-svg line{
-    stroke:#ffffff;stroke-width:2;stroke-opacity:0.5;
-    vector-effect:non-scaling-stroke;fill:none;
-  }
-
-  /* 인물 실루엣(사람 형태) — 세로 비율 기본: 데크 중앙 */
-  #silhouette{
-    position:absolute;left:50%;bottom:9.6%;transform:translateX(-50%);
-    width:17.6%;aspect-ratio:1 / 2;height:auto;
-    display:flex;align-items:flex-end;justify-content:center;
-    pointer-events:none;transition:width .3s ease,bottom .3s ease;
-  }
-  /* 가로 비율일 때: 좌우 나무를 살리도록 인물을 더 작게·하단 중앙(대칭 구도) */
-  #silhouette.landscape{
-    width:11%;bottom:7%;
-  }
-  .sil-figure{width:100%;height:100%;filter:drop-shadow(0 0 7px rgba(74,222,128,0.35));}
-  .sil-figure circle,.sil-figure path{
-    fill:rgba(74,222,128,0.22);stroke:var(--neon-soft);stroke-width:3;stroke-linejoin:round;
-  }
-  .sil-label{
-    position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-    font-size:10px;font-weight:700;color:#eafff0;
-    background:rgba(15,35,20,0.55);padding:3px 9px;border-radius:8px;white-space:nowrap;
-  }
-
   /* 상단 토스트 */
   .toast{
     position:absolute;top:14px;left:50%;transform:translateX(-50%) translateY(-12px);
@@ -195,43 +101,46 @@
     box-shadow:0 6px 20px rgba(57,255,20,0.4);max-width:88%;text-align:center;
   }
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
-
   /* 촬영 플래시 */
   .flash{position:absolute;inset:0;background:#fff;z-index:12;opacity:0;pointer-events:none;}
   .flash.fire{animation:flashFire .45s ease;}
   @keyframes flashFire{0%{opacity:.92;}100%{opacity:0;}}
-
   /* ===== 하단 패널 ===== */
   .panel{padding:18px 16px 22px;background:var(--bg-phone);}
-
-  .section-title{font-size:11px;color:var(--txt-dim);font-weight:600;margin:0 2px 8px;letter-spacing:.2px;}
-
-  /* 비율 칩 */
-  .ratio-row{display:flex;gap:6px;}
-  .ratio-chip{
-    flex:1;font-size:11.5px;font-weight:600;color:var(--txt-dim);
-    background:var(--bg-panel);border:1px solid var(--line);border-radius:10px;
-    padding:10px 4px;cursor:pointer;transition:.2s;white-space:nowrap;
+  .section-title{font-size:13px;color:var(--txt-dim);font-weight:600;margin:0 2px 8px;letter-spacing:.2px;}
+  /* 필터(스티커) 선택 그리드 */
+  .sticker-options{
+    display:flex; gap:10px; overflow-x:auto; padding-bottom:10px;
+    scrollbar-width:none;
   }
-  .ratio-chip.active{color:var(--txt);border-color:var(--neon-soft);background:rgba(74,222,128,0.1);}
-
+  .sticker-options::-webkit-scrollbar { display:none; }
+  
+  .sticker-item{
+    flex:0 0 70px;
+    display:flex;flex-direction:column;align-items:center;gap:6px;
+    cursor:pointer; transition:0.2s;
+  }
+  .sticker-item:active{ transform:scale(0.95); }
+  .sticker-thumb{
+    width:70px;height:70px;border-radius:12px;background:var(--bg-panel);
+    border:1px solid var(--line); display:flex;align-items:center;justify-content:center;
+    overflow:hidden;
+  }
+  .sticker-thumb img{ width:80%;height:80%;object-fit:contain; }
+  .sticker-name{
+    font-size:11px;color:var(--txt-dim);font-weight:600;text-align:center;
+    white-space:nowrap;
+  }
   /* 최하단 조작부 */
-  .controls{display:flex;align-items:center;justify-content:space-between;margin-top:22px;padding:0 6px;}
-  .ctrl-spacer{width:52px;height:52px;}
+  .controls{display:flex;align-items:center;justify-content:center;margin-top:22px;}
   .shutter{
     width:70px;height:70px;border-radius:50%;background:#fff;border:4px solid #c9ccd1;
     box-shadow:0 0 0 3px var(--bg-phone),0 0 24px rgba(255,255,255,0.25);cursor:pointer;transition:.12s;
   }
   .shutter:active{transform:scale(0.92);box-shadow:0 0 0 3px var(--bg-phone),0 0 12px rgba(255,255,255,0.4);}
-  .gallery{
-    width:52px;height:52px;border-radius:50%;background:var(--bg-elev);border:1px solid var(--line);
-    color:var(--txt-dim);font-size:20px;cursor:pointer;transition:.2s;
-  }
-  .gallery:hover{background:#31353b;}
-
   /* ===== 촬영 결과 ===== */
   .result{
-    position:absolute;inset:0;z-index:22;background:rgba(0,0,0,0.9);
+    position:fixed;inset:0;z-index:22;background:rgba(0,0,0,0.9);
     display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:20px;
     opacity:0;visibility:hidden;transition:opacity .25s,visibility .25s;
   }
@@ -241,8 +150,37 @@
   .result .r-btns{display:flex;flex-direction:column;gap:10px;width:82%;margin-top:4px;}
   .r-save{padding:13px;border:none;border-radius:12px;background:var(--neon);color:#0a0f07;font-size:14px;font-weight:800;cursor:pointer;}
   .r-retake{padding:11px;border:1px solid rgba(255,255,255,0.4);border-radius:12px;background:transparent;color:#fff;font-size:13px;font-weight:600;cursor:pointer;}
-
-  /* ===== 모바일: 실제 스마트폰에서 화면 꽉 채우기 ===== */
+  /* ===== 스티커(필터): 드래그 이동 + 모서리 크기조절 ===== */
+  .canvas-sticker{
+    position:absolute; z-index:8; top:50%; left:50%;
+    transform:translate(-50%,-50%);
+    width:120px; touch-action:none; cursor:grab;
+    border:1px dashed transparent;
+  }
+  .canvas-sticker.active{
+    border-color:rgba(57,255,20,0.75);
+  }
+  .canvas-sticker.dragging{cursor:grabbing;}
+  .canvas-sticker img{
+    display:block;width:100%;height:auto;pointer-events:none;user-select:none;-webkit-user-select:none;
+    filter:drop-shadow(0 3px 8px rgba(0,0,0,0.45));
+  }
+  .canvas-sticker .resize-handle{
+    position:absolute;right:-10px;bottom:-10px;width:24px;height:24px;border-radius:50%;
+    background:var(--neon);border:2px solid #0a0f07;box-shadow:0 1px 6px rgba(0,0,0,0.55);
+    touch-action:none;cursor:nwse-resize;z-index:2; display:none;
+  }
+  .canvas-sticker .delete-btn{
+    position:absolute;left:-10px;top:-10px;width:24px;height:24px;border-radius:50%;
+    background:#ff3b30;color:#fff;border:2px solid #0a0f07;box-shadow:0 1px 6px rgba(0,0,0,0.55);
+    display:none; align-items:center; justify-content:center; font-size:14px; font-weight:bold;
+    cursor:pointer; z-index:2; line-height:1;
+  }
+  .canvas-sticker.active .resize-handle,
+  .canvas-sticker.active .delete-btn {
+    display:flex;
+  }
+  /* 모바일 꽉 채우기 */
   @media (max-width:480px){
     body{padding:0;background:var(--bg-page);}
     .phone{
@@ -251,661 +189,258 @@
       border-radius:0;border:none;box-shadow:none;
     }
   }
-
-  @media (prefers-reduced-motion:reduce){*{transition:none !important;animation:none !important;}}
-
-  /* ===== 헤더 액션 (퀘스트 버튼) ===== */
-  .head-actions{display:flex;align-items:center;gap:8px;flex-shrink:0;margin-left:10px;}
-  .quest-btn{display:flex;align-items:center;gap:6px;border:1px solid var(--neon-soft);
-    background:rgba(74,222,128,0.12);color:var(--neon-soft);font-size:11.5px;font-weight:700;
-    padding:7px 11px;border-radius:999px;cursor:pointer;white-space:nowrap;}
-  .quest-btn .badge{background:var(--neon);color:#0a0f07;font-size:10.5px;font-weight:800;border-radius:999px;padding:1px 7px;}
-
-  /* ===== 촬영 필터 오버레이 (뷰파인더 위) ===== */
-  .filter-overlay{position:absolute;z-index:6;width:34%;height:auto;pointer-events:none;
-    filter:drop-shadow(0 3px 8px rgba(0,0,0,0.45));display:none;}
-  .filter-overlay.show{display:block;}
-  .filter-overlay.pos-br{right:4%;bottom:4%;}
-  .filter-overlay.pos-bl{left:5%;bottom:4%;width:26%;}
-
-  /* ===== 필터 선택 칩 ===== */
-  .filter-row{display:flex;gap:8px;margin-top:6px;}
-  .filter-chip{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;
-    font-size:11px;font-weight:600;color:var(--txt-dim);background:var(--bg-panel);
-    border:1px solid var(--line);border-radius:12px;padding:9px 4px;cursor:pointer;transition:.2s;}
-  .filter-chip .fi{font-size:20px;line-height:1;}
-  .filter-chip.active{color:var(--txt);border-color:var(--neon-soft);background:rgba(74,222,128,0.12);}
-
-  /* ===== 퀘스트 오버레이 ===== */
-  .quest-ov{position:absolute;inset:0;z-index:30;background:#0b0e0a;display:flex;flex-direction:column;
-    transform:translateY(100%);transition:transform .32s ease;}
-  .quest-ov.open{transform:translateY(0);}
-  .qo-head{flex-shrink:0;display:flex;align-items:center;justify-content:space-between;
-    padding:16px 16px 12px;background:linear-gradient(180deg,#13180f,#0b0e0a);}
-  .qo-title{font-size:15px;font-weight:800;letter-spacing:-.3px;}
-  .qo-title small{display:block;font-size:10.5px;color:var(--neon-soft);font-weight:600;margin-top:2px;}
-  .qo-close{width:30px;height:30px;border-radius:50%;border:none;background:var(--bg-elev);
-    color:var(--txt-dim);font-size:18px;cursor:pointer;flex-shrink:0;}
-  .qo-body{flex:1;overflow-y:auto;padding:14px 16px 22px;}
-  .qo-progress{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
-  .qo-bar{flex:1;height:10px;border-radius:999px;background:var(--bg-elev);overflow:hidden;}
-  .qo-bar i{display:block;height:100%;width:0;border-radius:999px;
-    background:linear-gradient(90deg,var(--neon-soft),var(--neon));transition:width .4s ease;}
-  .qo-count{font-size:13px;font-weight:800;color:var(--neon-soft);white-space:nowrap;}
-
-  /* 일러스트 지도 */
-  .qmap{position:relative;width:100%;aspect-ratio:1/1;border-radius:16px;overflow:hidden;margin-bottom:16px;
-    background:radial-gradient(120% 120% at 50% 0%,#1c2a18 0%,#101a0e 60%,#0c140a 100%);border:1px solid #24331f;}
-  .qmap svg.trail{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;}
-  .qmap svg.trail path{fill:none;stroke:#3a5a30;stroke-width:2.5;stroke-dasharray:5 7;stroke-linecap:round;}
-  .pin{position:absolute;transform:translate(-50%,-50%);width:34px;height:34px;border-radius:50%;
-    display:flex;align-items:center;justify-content:center;cursor:pointer;
-    background:rgba(38,48,33,0.5);border:2px solid #4a5a40;color:#9aa890;font-size:12px;font-weight:800;}
-  .pin .pnum{position:relative;z-index:1;}
-  .pin.done{border-color:var(--neon);background:rgba(57,255,20,0.18);color:#eafff0;box-shadow:0 0 14px rgba(57,255,20,0.4);}
-  .pin.done .pthumb{position:absolute;inset:2px;border-radius:50%;object-fit:cover;
-    width:calc(100% - 4px);height:calc(100% - 4px);opacity:.85;}
-  .pin-label{position:absolute;top:calc(100% + 2px);left:50%;transform:translateX(-50%);
-    font-size:8.5px;color:#cfe0c4;white-space:nowrap;background:rgba(8,14,8,0.6);padding:1px 5px;border-radius:6px;}
-
-  /* 스팟 리스트 */
-  .qspot{display:flex;align-items:center;gap:10px;padding:10px 4px;border-bottom:1px solid #1c2618;cursor:pointer;}
-  .qs-dot{width:26px;height:26px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;
-    font-size:11px;font-weight:800;background:var(--bg-elev);color:var(--txt-dim);border:1px solid var(--line);}
-  .qspot.done .qs-dot{background:var(--neon);color:#0a0f07;border-color:var(--neon);}
-  .qs-name{flex:1;font-size:13px;color:var(--txt);font-weight:600;}
-  .qs-stat{font-size:11px;color:var(--txt-dim);}
-  .qspot.done .qs-stat{color:var(--neon-soft);font-weight:700;}
-
-  /* 리워드 */
-  .reward{margin-top:16px;border-radius:14px;padding:16px;text-align:center;
-    background:repeating-linear-gradient(45deg,#15140a,#15140a 10px,#181708 10px,#181708 20px);
-    border:1px dashed #4a4520;color:var(--txt-dim);}
-  .reward.unlocked{border-color:var(--neon);background:rgba(57,255,20,0.08);color:var(--txt);}
-  .reward .rw-emo{font-size:30px;}
-  .reward .rw-t{font-size:14px;font-weight:800;margin-top:6px;}
-  .reward .rw-s{font-size:11.5px;margin-top:4px;line-height:1.5;}
-  .reward .rw-code{display:inline-block;margin-top:10px;font-family:monospace;font-size:14px;font-weight:800;
-    letter-spacing:1px;color:#0a0f07;background:var(--neon);padding:7px 14px;border-radius:8px;}
-
-  /* 스팟 선택 모달 */
-  .picker-ov{position:absolute;inset:0;z-index:34;background:rgba(0,0,0,0.78);display:none;align-items:flex-end;}
-  .picker-ov.open{display:flex;}
-  .pk-card{width:100%;background:var(--bg-phone);border-radius:18px 18px 0 0;padding:16px 16px 22px;max-height:72%;overflow-y:auto;}
-  .pk-title{font-size:14px;font-weight:800;margin-bottom:4px;}
-  .pk-sub{font-size:11px;color:var(--txt-dim);margin-bottom:12px;}
-  .pk-item{display:flex;align-items:center;gap:10px;padding:12px 6px;border-bottom:1px solid var(--line);
-    cursor:pointer;font-size:13px;color:var(--txt);font-weight:600;}
-  .pk-item .pk-i{font-size:16px;}
-  .pk-close{margin-top:14px;width:100%;padding:12px;border:1px solid var(--line);border-radius:12px;
-    background:transparent;color:var(--txt-dim);font-size:13px;font-weight:600;cursor:pointer;}
-
-  /* 지도 버튼 (셔터 우측) */
-  .gallery.map-btn{position:relative;color:var(--neon-soft);border-color:var(--neon-soft);background:rgba(74,222,128,0.10);}
-  .gallery.map-btn:active{transform:scale(0.92);}
-  .gallery.map-btn svg{width:24px;height:24px;display:block;}
-  .map-badge{position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;padding:0 4px;border-radius:999px;
-    background:var(--neon);color:#0a0f07;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;
-    border:2px solid var(--bg-phone);}
-  /* 촬영 사진 그리드 */
-  .photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;}
-  .photo-grid img{width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:8px;border:1px solid var(--line);cursor:pointer;}
-  .photo-empty{grid-column:1/-1;padding:18px;text-align:center;color:var(--txt-dim);font-size:12px;
-    border:1px dashed var(--line);border-radius:10px;line-height:1.6;}
-  /* 사진 라이트박스 */
-  .lightbox{position:absolute;inset:0;z-index:40;background:rgba(0,0,0,0.92);display:none;align-items:center;justify-content:center;padding:24px;}
-  .lightbox.open{display:flex;}
-  .lightbox img{max-width:100%;max-height:100%;border-radius:12px;}
-  /* 닫힌 퀘스트 오버레이가 클릭을 막지 않도록(방어) */
-  .quest-ov:not(.open){pointer-events:none;}
 </style>
 </head>
 <body>
-
 <div class="phone">
-
-  <!-- 헤더: 단일 항목 고정 -->
   <div class="header">
     <div class="title-wrap">
-      <div class="title">📸 충청 픽스쳐</div>
-    </div>
-    <div class="head-actions">
-      <button class="quest-btn" onclick="openQuest()"><span class="badge" id="questBadge">0/10</span>🗺️ 퀘스트</button>
-      <button class="close-btn" onclick="closeApp()" aria-label="닫기">×</button>
+      <div class="title">📸 대전 관광 픽스쳐</div>
     </div>
   </div>
-
-  <!-- 촬영 정보 바: 추천 시간대 · 날씨 · 추천 비율 -->
-  <div class="info-bar">
-    <div class="info-item">
-      <span class="info-label">🕙 추천 시간</span>
-      <span class="info-value">10시~15시</span>
-    </div>
-    <div class="info-item">
-      <span class="info-label">☀️ 날씨</span>
-      <span class="info-value">맑음</span>
-    </div>
-    <div class="info-item">
-      <span class="info-label">📐 추천 비율</span>
-      <span class="info-value">세로 16:9</span>
-    </div>
-  </div>
-
   <div class="scroll">
-
     <!-- 뷰파인더 -->
-    <div id="viewfinder">
+    <div id="viewfinder" onclick="deselectAllStickers()">
       <video id="cameraFeed" autoplay playsinline muted></video>
-      <button class="cam-flip" id="camFlip" onclick="flipCamera()" aria-label="전후면 전환">🔄</button>
-
+      <button class="cam-flip" id="camFlip" onclick="flipCamera(event)" aria-label="전후면 전환">🔄</button>
       <!-- 카메라 시작 -->
       <div class="cam-start" id="camStart" onclick="startCamera()">
         <div class="cam-icon">📷</div>
         <div class="cam-label" id="camLabel">탭하여 실시간 카메라 시작</div>
-        <div class="cam-sub" id="camSub">가이드가 실제 카메라 화면 위에 표시됩니다</div>
-        <button class="cam-copy" id="camCopy" onclick="copyUrl(event)">🔗 주소 복사 → Safari에 붙여넣기</button>
       </div>
-
-      <!-- 팁 토글 버튼 + 팁 카드 -->
-      <button class="tip-btn" id="tipBtn" onclick="toggleTip(event)" aria-label="촬영 팁">!</button>
-      <div id="tip-card">
-        <span class="bulb">💡</span>
-        <span id="tipText">메타세쿼이아들이 화면 가운데 한 점(소실점)으로 모이도록 폰을 수평으로 들고, 데크 중앙에 인물을 세우면 끝없이 뻗은 길 느낌이 살아납니다. 세로 16:9 비율을 추천합니다.</span>
-      </div>
-
-      <img id="filterOverlay" class="filter-overlay" alt="">
       <div class="toast" id="toast"></div>
       <div class="flash" id="flash"></div>
-
-      <div class="guides">
-        <!-- 흰색 소실점 수렴선 -->
-        <svg class="vp-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-          <line x1="0" y1="100" x2="50" y2="32"/>
-          <line x1="100" y1="100" x2="50" y2="32"/>
-          <line x1="30" y1="100" x2="50" y2="32"/>
-          <line x1="70" y1="100" x2="50" y2="32"/>
-        </svg>
-
-        <!-- 인물 실루엣(사람 형태) -->
-        <div id="silhouette">
-          <svg class="sil-figure" viewBox="0 0 100 200" preserveAspectRatio="xMidYMax meet" aria-hidden="true">
-            <circle cx="50" cy="25" r="20"/>
-            <path d="M50 46 C33 46 25 58 25 74 L28 120 L34 120 L37 192 C37 197 46 197 47 191 L49 126 L51 126 L53 191 C54 197 63 197 63 192 L66 120 L72 120 L75 74 C75 58 67 46 50 46 Z"/>
-          </svg>
-          <span class="sil-label">인물 위치</span>
-        </div>
-      </div>
+      <!-- 스티커들이 추가될 컨테이너 -->
+      <div id="stickerContainer"></div>
     </div>
-
     <!-- 하단 패널 -->
     <div class="panel">
-      <div class="section-title">사진 비율</div>
-      <div class="ratio-row">
-        <button class="ratio-chip" data-ratio="4:3" onclick="setRatio('4:3')">4:3</button>
-        <button class="ratio-chip" data-ratio="1:1" onclick="setRatio('1:1')">1:1</button>
-        <button class="ratio-chip active" data-ratio="16:9" onclick="setRatio('16:9')">16:9 세로</button>
-        <button class="ratio-chip" data-ratio="land" onclick="setRatio('land')">16:9 가로</button>
+      <div class="section-title">대전 상징 스티커 추가하기</div>
+      
+      <!-- 스티커 선택 목록 -->
+      <div class="sticker-options">
+        <div class="sticker-item" onclick="addSticker('hanbit.png')">
+          <div class="sticker-thumb"><img src="hanbit.png" alt="한빛탑"></div>
+          <div class="sticker-name">한빛탑</div>
+        </div>
+        <div class="sticker-item" onclick="addSticker('ballpark.png')">
+          <div class="sticker-thumb"><img src="ballpark.png" alt="볼파크"></div>
+          <div class="sticker-name">볼파크</div>
+        </div>
+        <div class="sticker-item" onclick="addSticker('kumdori.png')">
+          <div class="sticker-thumb"><img src="kumdori.png" alt="꿈돌이"></div>
+          <div class="sticker-name">꿈돌이</div>
+        </div>
+        <div class="sticker-item" onclick="addSticker('sungsimdang.png')">
+          <div class="sticker-thumb"><img src="sungsimdang.png" alt="성심당"></div>
+          <div class="sticker-name">성심당</div>
+        </div>
       </div>
-
-      <div class="section-title" style="margin-top:14px;">촬영 필터 · 대전</div>
-      <div class="filter-row" id="filterRow"></div>
-
+      <div style="font-size:11px;color:var(--txt-dim);margin-top:8px;text-align:center;">
+        👆 원하는 이미지를 탭해서 사진에 추가하고 자유롭게 배치하세요.
+      </div>
       <div class="controls">
-        <div class="ctrl-spacer"></div>
         <button class="shutter" onclick="captureShot()" aria-label="셔터"></button>
-        <button class="gallery map-btn" onclick="openQuest()" aria-label="지도·퀘스트 보기">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M3 6 L9 3.5 L15 6 L21 3.5 V18 L15 20.5 L9 18 L3 20.5 Z"/>
-            <path d="M9 3.5 V18 M15 6 V20.5"/>
-            <circle cx="12.4" cy="10.6" r="1.5" fill="currentColor" stroke="none"/>
-          </svg>
-          <span class="map-badge" id="mapBadge">0</span>
-        </button>
       </div>
     </div>
   </div>
-
   <!-- 촬영 결과 -->
   <div class="result" id="result">
     <div class="r-title">📸 촬영 완료!</div>
     <img id="shotImg" alt="촬영한 사진">
     <div class="r-btns">
       <button class="r-save" onclick="savePhoto()">📥 갤러리에 저장</button>
-      <button class="r-quest" onclick="registerQuest()" style="padding:12px;border-radius:12px;background:rgba(74,222,128,0.16);color:#4ade80;font-size:13.5px;font-weight:800;cursor:pointer;border:1px solid #4ade80;">🗺️ 퀘스트에 등록 (방문 인증)</button>
       <button class="r-retake" onclick="closeResult()">↩︎ 다시 찍기</button>
     </div>
   </div>
-
-  <!-- ===== 퀘스트 오버레이 ===== -->
-  <div class="quest-ov" id="questOv">
-    <div class="qo-head">
-      <div class="qo-title">🗺️ 대전 포토 어드벤처<small>관광지 10곳 인증 · 가맹점 5% 캐시백</small></div>
-      <button class="qo-close" onclick="closeQuest()" aria-label="닫기">×</button>
-    </div>
-    <div class="qo-body">
-      <div class="qo-progress">
-        <div class="qo-bar"><i id="qoBarFill"></i></div>
-        <div class="qo-count" id="qoCount">0 / 10</div>
-      </div>
-      <div class="qmap" id="qmap">
-        <svg class="trail" viewBox="0 0 100 100" preserveAspectRatio="none"><path id="qTrail" d=""/></svg>
-      </div>
-      <div id="qspotList"></div>
-      <div class="section-title" style="margin:18px 0 8px;">📷 이 앱으로 촬영한 사진</div>
-      <div class="photo-grid" id="photoGrid"></div>
-      <div class="reward" id="reward">
-        <div class="rw-emo">🎁</div>
-        <div class="rw-t" id="rwT">아직 잠겨 있어요</div>
-        <div class="rw-s" id="rwS">관광지 10곳을 모두 인증하면 대전 가맹 시장·식당 5% 캐시백 쿠폰이 열립니다.</div>
-      </div>
-      <p style="font-size:10px;color:#9aa0a6;margin-top:14px;line-height:1.5;text-align:center;">* 캐시백·가맹점은 지자체 협약을 전제로 한 데모 정책 예시이며, 좌표·관광지·쿠폰 코드는 시연용 예시값입니다.</p>
-    </div>
-  </div>
-
-  <!-- ===== 스팟 선택 모달 ===== -->
-  <div class="picker-ov" id="pickerOv">
-    <div class="pk-card">
-      <div class="pk-title">어디서 촬영하셨나요?</div>
-      <div class="pk-sub">GPS가 어렵거나 미리 보려면 장소를 직접 선택하세요.</div>
-      <div id="pickerList"></div>
-      <button class="pk-close" onclick="closePicker()">닫기</button>
-    </div>
-  </div>
-
-  <!-- 사진 라이트박스 -->
-  <div class="lightbox" id="lightbox" onclick="closeLightbox()"><img id="lightboxImg" alt=""></div>
-
 </div>
-
 <script>
-  /* ===== DOM ===== */
-  const tipCard  = document.getElementById('tip-card');
-  const tipBtn   = document.getElementById('tipBtn');
-  const toast    = document.getElementById('toast');
-  const vfEl     = document.getElementById('viewfinder');
-  const silEl    = document.getElementById('silhouette');
-  const tipTextEl= document.getElementById('tipText');
-
-  /* ===== 팁 토글(!) ===== */
-  function toggleTip(e){
-    if(e) e.stopPropagation();
-    const on = tipCard.classList.toggle('show');
-    tipBtn.classList.toggle('active', on);
-  }
-
-  /* ===== 토스트 ===== */
-  function showToast(msg){
-    toast.textContent = msg;
-    toast.classList.add('show');
-    clearTimeout(toast._t);
-    toast._t = setTimeout(()=>toast.classList.remove('show'), 2400);
-  }
-
-  /* ===== 비율 ===== */
-  const TIP_PORTRAIT = '메타세쿼이아들이 화면 가운데 한 점(소실점)으로 모이도록 폰을 수평으로 들고, 데크 중앙에 인물을 세우면 끝없이 뻗은 길 느낌이 살아납니다. 세로 16:9 비율을 추천합니다.';
-  const TIP_LAND = '폰을 가로로 눕혀 좌우 메타세쿼이아를 넓게 담고, 데크 정중앙에 인물을 작게 세우면 양옆 나무가 대칭으로 뻗어나가는 가로 풍경 구도가 됩니다. 인물 머리가 가운데 소실점보다 살짝 아래 오도록 맞추세요.';
-  function setRatio(ratio){
-    const map = { '4:3':'3 / 4', '1:1':'1 / 1', '16:9':'9 / 16', 'land':'16 / 9' };
-    vfEl.style.height = '';
-    vfEl.style.aspectRatio = map[ratio] || '9 / 16';
-    const isLand = (ratio === 'land');
-    silEl.classList.toggle('landscape', isLand);
-    if(tipTextEl) tipTextEl.textContent = isLand ? TIP_LAND : TIP_PORTRAIT;
-    document.querySelectorAll('.ratio-chip').forEach(c=>c.classList.toggle('active', c.dataset.ratio===ratio));
-  }
-
-  /* ===== 닫기 ===== */
-  function closeApp(){ showToast('데모 종료 — 새로고침 시 재시작'); }
-
-  /* ===== 라이브 카메라 ===== */
+  /* ===== 카메라 로직 ===== */
   let camStream = null;
   let camFacing = 'environment';
-  const videoEl  = document.getElementById('cameraFeed');
+  const videoEl = document.getElementById('cameraFeed');
   const camStart = document.getElementById('camStart');
-  const camLabel = document.getElementById('camLabel');
-  const camSub   = document.getElementById('camSub');
-  const camFlip  = document.getElementById('camFlip');
-  const camCopy  = document.getElementById('camCopy');
-
-  function isInAppBrowser(){
-    const ua = navigator.userAgent || '';
-    return /KAKAOTALK|Instagram|FBAN|FBAV|FB_IAB|NAVER\(inapp|DaumApps|Line\/|Snapchat|Twitter|everytimeApp|wadiz|Band/i.test(ua);
-  }
-
-  function copyUrl(e){
-    if(e) e.stopPropagation();
-    const url = location.href;
-    const done = ()=>{ camCopy.textContent = '✅ 복사됨 — Safari 주소창에 붙여넣기'; };
-    if(navigator.clipboard && navigator.clipboard.writeText){
-      navigator.clipboard.writeText(url).then(done).catch(()=>{ window.prompt('아래 주소를 복사해 Safari·Chrome에서 열어주세요', url); });
-    }else{
-      window.prompt('아래 주소를 복사해 Safari·Chrome에서 열어주세요', url);
-    }
-  }
-
-  function stopCamera(){ if(camStream){ camStream.getTracks().forEach(t=>t.stop()); camStream = null; } }
-
   async function startCamera(){
-    if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
-      if(isInAppBrowser()){
-        camLabel.textContent = '인앱 브라우저는 카메라를 지원하지 않습니다';
-        camSub.textContent   = '아래 "주소 복사" 후 Safari·Chrome 주소창에 붙여넣어 열어주세요';
-        camCopy.style.display = 'inline-block';
-      }else{
-        camLabel.textContent = '이 환경에서는 카메라를 켤 수 없습니다';
-        camSub.textContent   = 'HTTPS 주소 + 시스템 브라우저(Safari·Chrome)에서 열어주세요. 현재는 데모용 배경 표시 중.';
-      }
-      return;
-    }
-    camLabel.textContent = '카메라 연결 중…';
-    camSub.textContent   = '권한 요청 창에서 "허용"을 눌러주세요';
     try{
-      stopCamera();
+      if(camStream) camStream.getTracks().forEach(t=>t.stop());
       camStream = await navigator.mediaDevices.getUserMedia({ video:{ facingMode: camFacing }, audio:false });
       videoEl.srcObject = camStream;
-      await videoEl.play().catch(()=>{});
+      await videoEl.play();
       videoEl.classList.add('live');
       videoEl.classList.toggle('mirror', camFacing === 'user');
       camStart.classList.add('hide');
-      camFlip.classList.add('show');
+      document.getElementById('camFlip').classList.add('show');
     }catch(err){
-      let msg = '카메라를 사용할 수 없습니다';
-      let sub = '권한 허용 후 다시 탭하거나, 시스템 브라우저(HTTPS)에서 열어주세요';
-      if(isInAppBrowser()){
-        msg = '인앱 브라우저는 카메라를 지원하지 않습니다';
-        sub = '아래 "주소 복사" 후 Safari·Chrome 주소창에 붙여넣어 열어주세요';
-      }else if(err && err.name === 'NotAllowedError'){
-        msg = '카메라 권한이 거부되었습니다';
-        sub = '주소창 "AA → 웹사이트 설정 → 카메라 → 허용" 후 새로고침. (미리보기·iframe이면 단독 주소로 열기)';
-      }else if(err && err.name === 'NotFoundError'){
-        msg = '사용 가능한 카메라가 없습니다';
-        sub = '카메라가 있는 기기에서 열어주세요';
-      }
-      camLabel.textContent = msg;
-      camSub.textContent   = sub;
-      camCopy.style.display = 'inline-block';
+      alert("카메라를 켤 수 없습니다. 브라우저 설정을 확인해주세요.");
     }
   }
-
-  async function flipCamera(){
+  async function flipCamera(e){
+    e.stopPropagation();
     camFacing = (camFacing === 'environment') ? 'user' : 'environment';
     await startCamera();
   }
-
-  /* ===== 사진 촬영 & 갤러리 저장 ===== */
-  let lastShotFile = null;
-  const flashEl  = document.getElementById('flash');
-  const resultEl = document.getElementById('result');
-  const shotImg  = document.getElementById('shotImg');
-
-  function captureShot(){
-    if(!camStream || !videoEl.videoWidth){
-      showToast('먼저 카메라를 켜주세요 (화면을 탭)');
-      return;
+  /* ===== 스티커 다중 추가 및 조작 로직 ===== */
+  const stickerContainer = document.getElementById('stickerContainer');
+  let activeSticker = null;
+  function addSticker(imgSrc) {
+    // 실제 이미지가 첨부된 경로를 사용하도록 안내 (여기서는 파일명으로 테스트)
+    const stickerDiv = document.createElement('div');
+    stickerDiv.className = 'canvas-sticker active';
+    
+    // 모바일 터치이벤트를 위해 left/top 값을 픽셀로 지정해두는 것이 조작에 유리합니다.
+    const vfRect = document.getElementById('viewfinder').getBoundingClientRect();
+    stickerDiv.style.left = (vfRect.width / 2) + 'px';
+    stickerDiv.style.top = (vfRect.height / 2) + 'px';
+    stickerDiv.style.transform = 'translate(-50%, -50%)';
+    const img = document.createElement('img');
+    img.src = imgSrc;
+    
+    const delBtn = document.createElement('div');
+    delBtn.className = 'delete-btn';
+    delBtn.innerHTML = '×';
+    delBtn.onclick = (e) => {
+      e.stopPropagation();
+      stickerDiv.remove();
+    };
+    const resizeBtn = document.createElement('div');
+    resizeBtn.className = 'resize-handle';
+    
+    stickerDiv.appendChild(img);
+    stickerDiv.appendChild(delBtn);
+    stickerDiv.appendChild(resizeBtn);
+    
+    stickerContainer.appendChild(stickerDiv);
+    
+    makeStickerInteractive(stickerDiv, resizeBtn);
+    setActiveSticker(stickerDiv);
+  }
+  function setActiveSticker(sticker) {
+    if(activeSticker) {
+      activeSticker.classList.remove('active');
     }
-    flashEl.classList.remove('fire'); void flashEl.offsetWidth; flashEl.classList.add('fire');
-
-    const vw = videoEl.videoWidth, vh = videoEl.videoHeight;
-    const targetAspect = vfEl.clientWidth / vfEl.clientHeight;
-    const videoAspect  = vw / vh;
-    let sx, sy, sw, sh;
-    if(videoAspect > targetAspect){ sh = vh; sw = vh * targetAspect; sx = (vw - sw)/2; sy = 0; }
-    else { sw = vw; sh = vw / targetAspect; sx = 0; sy = (vh - sh)/2; }
-
-    const canvas = document.createElement('canvas');
-    canvas.width = Math.round(sw); canvas.height = Math.round(sh);
-    const ctx = canvas.getContext('2d');
-    if(camFacing === 'user'){ ctx.translate(canvas.width, 0); ctx.scale(-1, 1); }
-    ctx.drawImage(videoEl, sx, sy, sw, sh, 0, 0, canvas.width, canvas.height);
-    drawFilterOnCanvas(ctx, canvas.width, canvas.height);
-
-    const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
-    shotImg.src = dataUrl;
-    lastShotDataUrl = dataUrl;
-    savePhotoToGallery(dataUrl);
-    lastShotFile = dataURLtoFile(dataUrl, '충청픽스쳐_대전_' + Date.now() + '.jpg');
-
-    setTimeout(()=>resultEl.classList.add('open'), 180);
-  }
-
-  function dataURLtoFile(dataurl, filename){
-    const arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1];
-    const bstr = atob(arr[1]); let n = bstr.length; const u8 = new Uint8Array(n);
-    while(n--){ u8[n] = bstr.charCodeAt(n); }
-    return new File([u8], filename, { type: mime });
-  }
-
-  async function savePhoto(){
-    if(!lastShotFile) return;
-    if(navigator.canShare && navigator.canShare({ files:[lastShotFile] })){
-      try{ await navigator.share({ files:[lastShotFile], title:'충청 픽스쳐' }); return; }
-      catch(err){ if(err && err.name === 'AbortError') return; }
-    }
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(lastShotFile);
-    a.download = lastShotFile.name;
-    document.body.appendChild(a); a.click(); a.remove();
-    setTimeout(()=>URL.revokeObjectURL(a.href), 1000);
-  }
-
-  function closeResult(){ resultEl.classList.remove('open'); }
-
-  /* ===== 초기화 ===== */
-  if(isInAppBrowser()){
-    camSub.textContent = '인앱 브라우저 감지 — 카메라가 안 되면 Safari·Chrome로 열어주세요';
-  }
-
-  /* ================= 어드벤처 확장: 필터 · 퀘스트 · 지도 ================= */
-  let lastShotDataUrl = null;
-
-  /* --- 필터 아트 (대전: 꿈돌이/한빛탑 — 시연용 오리지널 일러스트, 실제 자산은 협약 후 교체) --- */
-  const SVG_MASCOT = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 240">
-    <path d="M34 214 Q66 156 100 124" stroke="#ffd54a" stroke-width="15" fill="none" stroke-linecap="round" opacity="0.7"/>
-    <circle cx="112" cy="98" r="64" fill="#ffcf33"/>
-    <circle cx="112" cy="98" r="64" fill="none" stroke="#e6a700" stroke-width="6"/>
-    <path d="M112 40 q20 6 11 26 q-9 16 -24 9" stroke="#ff8a00" stroke-width="8" fill="none" stroke-linecap="round"/>
-    <circle cx="92" cy="95" r="10" fill="#3a2a00"/><circle cx="132" cy="95" r="10" fill="#3a2a00"/>
-    <circle cx="95" cy="91" r="3.5" fill="#fff"/><circle cx="135" cy="91" r="3.5" fill="#fff"/>
-    <circle cx="80" cy="112" r="8" fill="#ff8f6b" opacity="0.55"/><circle cx="144" cy="112" r="8" fill="#ff8f6b" opacity="0.55"/>
-    <path d="M97 116 q15 15 30 0" stroke="#3a2a00" stroke-width="6" fill="none" stroke-linecap="round"/>
-  </svg>`;
-  const SVG_LANDMARK = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 260">
-    <defs><linearGradient id="lt" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d6ecff"/><stop offset="1" stop-color="#7fb6e6"/></linearGradient></defs>
-    <rect x="76" y="8" width="8" height="58" rx="4" fill="#e3eef7"/>
-    <circle cx="80" cy="9" r="6" fill="#39ff14"/>
-    <ellipse cx="80" cy="84" rx="42" ry="15" fill="url(#lt)" stroke="#5a8fc0" stroke-width="3"/>
-    <path d="M70 90 L90 90 L86 232 L74 232 Z" fill="url(#lt)" stroke="#5a8fc0" stroke-width="3"/>
-    <path d="M56 232 L104 232 L114 250 L46 250 Z" fill="#8aa0b0" stroke="#5a6f7f" stroke-width="3"/>
-    <line x1="80" y1="98" x2="80" y2="226" stroke="#fff" stroke-width="1.5" opacity="0.5"/>
-  </svg>`;
-  const svgUrl = svg => 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
-
-  const FILTERS = [
-    { id:'none',     label:'없음',   icon:'🚫', svg:null,         pos:'pos-br', w:0 },
-    { id:'mascot',   label:'꿈돌이', icon:'🌟', svg:SVG_MASCOT,   pos:'pos-br', w:0.34 },
-    { id:'landmark', label:'한빛탑', icon:'🗼', svg:SVG_LANDMARK, pos:'pos-bl', w:0.26 }
-  ];
-  let currentFilter = FILTERS[0];
-  const filterImg = {};
-  FILTERS.forEach(ff=>{ if(ff.svg){ const im=new Image(); im.src=svgUrl(ff.svg); filterImg[ff.id]=im; } });
-
-  const overlayEl = document.getElementById('filterOverlay');
-  const filterRow = document.getElementById('filterRow');
-  function renderFilterChips(){
-    filterRow.innerHTML='';
-    FILTERS.forEach(ff=>{
-      const b=document.createElement('button');
-      b.className='filter-chip'+(ff.id===currentFilter.id?' active':'');
-      b.innerHTML='<span class="fi">'+ff.icon+'</span>'+ff.label;
-      b.onclick=()=>selectFilter(ff.id);
-      filterRow.appendChild(b);
-    });
-  }
-  function selectFilter(id){
-    currentFilter = FILTERS.find(x=>x.id===id) || FILTERS[0];
-    if(currentFilter.svg){
-      overlayEl.src = svgUrl(currentFilter.svg);
-      overlayEl.className = 'filter-overlay show '+currentFilter.pos;
-    }else{
-      overlayEl.className = 'filter-overlay';
-    }
-    renderFilterChips();
-  }
-  function drawFilterOnCanvas(ctx, cw, ch){
-    const ff=currentFilter; if(!ff.svg) return;
-    const im=filterImg[ff.id]; if(!im || !im.complete || !im.naturalWidth) return;
-    const dw=cw*ff.w, dh=dw*(im.naturalHeight/im.naturalWidth);
-    const mx=cw*0.04, my=ch*0.04;
-    const x=(ff.pos==='pos-bl') ? cw*0.05 : (cw-dw-mx);
-    const y=ch-dh-my;
-    ctx.drawImage(im, x, y, dw, dh);
-  }
-
-  /* --- 대전 관광지 10곳 (예시 좌표 + 지도 좌표) --- */
-  const QUEST_GOAL = 10;
-  const SPOTS = [
-    {id:'hanbit',   name:'한빛탑·엑스포',     lat:36.3760, lng:127.3880, mx:50, my:20},
-    {id:'art',      name:'대전시립미술관',     lat:36.3666, lng:127.3878, mx:34, my:30},
-    {id:'expo',     name:'엑스포 다리',        lat:36.3742, lng:127.3905, mx:66, my:33},
-    {id:'daecheong',name:'대청호 전망대',      lat:36.4793, lng:127.4757, mx:80, my:46},
-    {id:'gyejok',   name:'계족산 황톳길',      lat:36.4040, lng:127.4480, mx:64, my:58},
-    {id:'sikjang',  name:'식장산 전망대',      lat:36.3180, lng:127.4800, mx:82, my:70},
-    {id:'euneung',  name:'으능정이 스카이로드', lat:36.3281, lng:127.4270, mx:46, my:66},
-    {id:'yuseong',  name:'유성온천',          lat:36.3540, lng:127.3410, mx:22, my:52},
-    {id:'ppuri',    name:'뿌리공원',          lat:36.2930, lng:127.3780, mx:38, my:80},
-    {id:'oworld',   name:'대전 오월드',        lat:36.2950, lng:127.3880, mx:58, my:86}
-  ];
-
-  /* --- 저장 (로컬, 실패 시 메모리 폴백) --- */
-  let memQuest = { visited:{} };
-  const qstore = {
-    load(){ try{ return JSON.parse(localStorage.getItem('cf_quest_dj')||'') || {visited:{}}; }catch(e){ return memQuest; } },
-    save(o){ memQuest=o; try{ localStorage.setItem('cf_quest_dj', JSON.stringify(o)); }catch(e){} }
-  };
-  let questState = qstore.load();
-  if(!questState.visited) questState.visited = {};
-
-  const qoBarFill=document.getElementById('qoBarFill'), qoCount=document.getElementById('qoCount'),
-        questBadge=document.getElementById('questBadge'), qmap=document.getElementById('qmap'),
-        qspotList=document.getElementById('qspotList'), qTrail=document.getElementById('qTrail'),
-        reward=document.getElementById('reward'), rwT=document.getElementById('rwT'), rwS=document.getElementById('rwS');
-
-  function visitedCount(){ return Object.keys(questState.visited).length; }
-  function couponCode(){ let s=0; Object.keys(questState.visited).forEach(k=>{ for(const c of k) s=(s*31+c.charCodeAt(0))%9000; }); return (1000+s).toString().slice(0,4); }
-
-  function renderQuest(){
-    const n=visitedCount();
-    qoBarFill.style.width=(n/QUEST_GOAL*100)+'%';
-    qoCount.textContent=n+' / '+QUEST_GOAL;
-    questBadge.textContent=n+'/'+QUEST_GOAL;
-    var _mb=document.getElementById('mapBadge'); if(_mb){ _mb.textContent=n; _mb.style.display=n?'flex':'none'; }
-    qTrail.setAttribute('d', SPOTS.map((s,i)=>(i?'L':'M')+s.mx+' '+s.my).join(' '));
-    qmap.querySelectorAll('.pin').forEach(p=>p.remove());
-    SPOTS.forEach((s,i)=>{
-      const v=questState.visited[s.id];
-      const pin=document.createElement('div');
-      pin.className='pin'+(v?' done':'');
-      pin.style.left=s.mx+'%'; pin.style.top=s.my+'%';
-      pin.innerHTML=(v&&v.photo?'<img class="pthumb" src="'+v.photo+'">':'')+'<span class="pnum">'+(v?'✓':(i+1))+'</span><span class="pin-label">'+s.name+'</span>';
-      pin.onclick=()=>{ if(v){ showToast(s.name+' · 인증 완료'); } else { openPicker(s.id); } };
-      qmap.appendChild(pin);
-    });
-    qspotList.innerHTML='';
-    SPOTS.forEach((s,i)=>{
-      const v=questState.visited[s.id];
-      const row=document.createElement('div');
-      row.className='qspot'+(v?' done':'');
-      row.innerHTML='<div class="qs-dot">'+(v?'✓':(i+1))+'</div><div class="qs-name">'+s.name+'</div><div class="qs-stat">'+(v?'인증 완료':'미인증')+'</div>';
-      row.onclick=()=>{ if(!v) openPicker(s.id); };
-      qspotList.appendChild(row);
-    });
-    if(n>=QUEST_GOAL){
-      reward.classList.add('unlocked');
-      rwT.textContent='🎉 대전 10곳 완주!';
-      rwS.innerHTML='가맹 시장·식당에서 5% 캐시백 쿠폰이 열렸습니다.<br><span class="rw-code">DJ-5PCT-'+couponCode()+'</span>';
-    }else{
-      reward.classList.remove('unlocked');
-      rwT.textContent='아직 잠겨 있어요 ('+n+'/'+QUEST_GOAL+')';
-      rwS.textContent='관광지 '+QUEST_GOAL+'곳을 모두 인증하면 대전 가맹 시장·식당 5% 캐시백 쿠폰이 열립니다.';
+    activeSticker = sticker;
+    if(activeSticker) {
+      activeSticker.classList.add('active');
     }
   }
-
-  function makeThumb(dataUrl, cb){
-    const i=new Image();
-    i.onload=()=>{ const sc=160/Math.max(i.width,i.height); const c=document.createElement('canvas');
-      c.width=Math.max(1,Math.round(i.width*sc)); c.height=Math.max(1,Math.round(i.height*sc));
-      c.getContext('2d').drawImage(i,0,0,c.width,c.height); cb(c.toDataURL('image/jpeg',0.6)); };
-    i.onerror=()=>cb(null); i.src=dataUrl;
+  function deselectAllStickers() {
+    if(activeSticker) activeSticker.classList.remove('active');
+    activeSticker = null;
   }
-  function markVisited(spotId){
-    const finish=(thumb)=>{ questState.visited[spotId]={photo:thumb,ts:Date.now()}; qstore.save(questState);
-      renderQuest(); const s=SPOTS.find(x=>x.id===spotId);
-      showToast('✅ '+(s?s.name:'장소')+' 인증! ('+visitedCount()+'/'+QUEST_GOAL+')'); openQuest(); };
-    if(lastShotDataUrl){ makeThumb(lastShotDataUrl, finish); } else { finish(null); }
-  }
-
-  function haversine(a,b,c,d){ const R=6371000, r=Math.PI/180;
-    const dLa=(c-a)*r, dLo=(d-b)*r;
-    const A=Math.sin(dLa/2)**2 + Math.cos(a*r)*Math.cos(c*r)*Math.sin(dLo/2)**2;
-    return 2*R*Math.asin(Math.sqrt(A)); }
-  function registerQuest(){
-    if(!navigator.geolocation){ openPicker(); return; }
-    showToast('📍 위치 확인 중…');
-    navigator.geolocation.getCurrentPosition(p=>{
-      const la=p.coords.latitude, lo=p.coords.longitude;
-      let best=null, bd=1e12;
-      SPOTS.forEach(s=>{ const dd=haversine(la,lo,s.lat,s.lng); if(dd<bd){ bd=dd; best=s; } });
-      if(best && bd<=700 && !questState.visited[best.id]){ markVisited(best.id); }
-      else if(best && questState.visited[best.id]){ showToast(best.name+' · 이미 인증됨'); openQuest(); }
-      else { showToast('근처 등록 장소를 못 찾음 — 직접 선택'); openPicker(); }
-    }, ()=>{ showToast('GPS 사용 불가 — 직접 선택'); openPicker(); }, {enableHighAccuracy:true,timeout:8000,maximumAge:60000});
-  }
-
-  const pickerOv=document.getElementById('pickerOv'), pickerList=document.getElementById('pickerList');
-  function openPicker(){
-    pickerList.innerHTML='';
-    SPOTS.forEach(s=>{
-      if(questState.visited[s.id]) return;
-      const it=document.createElement('div'); it.className='pk-item';
-      it.innerHTML='<span class="pk-i">📍</span>'+s.name;
-      it.onclick=()=>{ closePicker(); markVisited(s.id); };
-      pickerList.appendChild(it);
+  function makeStickerInteractive(sticker, resizer) {
+    let isDragging = false;
+    let isResizing = false;
+    let startX, startY;
+    let startLeft, startTop, startWidth;
+    // 터치/마우스 이벤트 통합 헬퍼
+    const getPos = (e) => e.touches ? {x: e.touches[0].clientX, y: e.touches[0].clientY} : {x: e.clientX, y: e.clientY};
+    sticker.addEventListener('pointerdown', (e) => {
+      if(e.target === resizer || e.target.classList.contains('delete-btn')) return;
+      e.stopPropagation();
+      setActiveSticker(sticker);
+      
+      isDragging = true;
+      sticker.classList.add('dragging');
+      const pos = getPos(e);
+      startX = pos.x;
+      startY = pos.y;
+      
+      const rect = sticker.getBoundingClientRect();
+      const parentRect = sticker.parentElement.getBoundingClientRect();
+      
+      // translate(-50%,-50%)가 적용된 상태이므로 기준 좌표 계산 보정
+      startLeft = parseFloat(sticker.style.left) || (rect.left - parentRect.left + rect.width/2);
+      startTop = parseFloat(sticker.style.top) || (rect.top - parentRect.top + rect.height/2);
+      
+      // 터치 캡처 (모바일 스크롤 방지 등)
+      sticker.setPointerCapture(e.pointerId);
     });
-    if(!pickerList.children.length){ pickerList.innerHTML='<div style="padding:14px 6px;color:#9aa0a6;font-size:13px;">모든 장소를 이미 인증했어요 🎉</div>'; }
-    pickerOv.classList.add('open');
+    resizer.addEventListener('pointerdown', (e) => {
+      e.stopPropagation();
+      isResizing = true;
+      const pos = getPos(e);
+      startX = pos.x;
+      startWidth = sticker.offsetWidth;
+      resizer.setPointerCapture(e.pointerId);
+    });
+    window.addEventListener('pointermove', (e) => {
+      const pos = getPos(e);
+      if(isDragging) {
+        const dx = pos.x - startX;
+        const dy = pos.y - startY;
+        sticker.style.left = (startLeft + dx) + 'px';
+        sticker.style.top = (startTop + dy) + 'px';
+      }
+      if(isResizing) {
+        const dx = pos.x - startX;
+        // 크기는 마우스 이동량에 비례하여 조절
+        const newWidth = Math.max(50, startWidth + dx);
+        sticker.style.width = newWidth + 'px';
+      }
+    });
+    const stopInteraction = () => {
+      if(isDragging) {
+        isDragging = false;
+        sticker.classList.remove('dragging');
+      }
+      isResizing = false;
+    };
+    window.addEventListener('pointerup', stopInteraction);
+    window.addEventListener('pointercancel', stopInteraction);
   }
-  function closePicker(){ pickerOv.classList.remove('open'); }
-
-  const questOv=document.getElementById('questOv');
-  function openQuest(){ questOv.classList.add('open'); try{ renderQuest(); renderPhotos(); }catch(e){ console.error(e); } }
-  function closeQuest(){ questOv.classList.remove('open'); }
-
-  renderFilterChips();
-  renderQuest();
-
-  /* ===== 촬영 사진 갤러리 + 라이트박스 ===== */
-  const PHOTO_KEY='cf_photos_dj';
-  let memPhotos=[];
-  const pstore={
-    load(){ try{ return JSON.parse(localStorage.getItem(PHOTO_KEY)||'[]') || []; }catch(e){ return memPhotos; } },
-    save(a){ memPhotos=a; try{ localStorage.setItem(PHOTO_KEY, JSON.stringify(a)); }catch(e){} }
-  };
-  let photos = pstore.load();
-  const photoGrid = document.getElementById('photoGrid');
-  function savePhotoToGallery(dataUrl){
-    makeThumb(dataUrl, t=>{ if(!t) return; photos.unshift({photo:t, ts:Date.now()});
-      if(photos.length>50) photos = photos.slice(0,50); pstore.save(photos); renderPhotos(); });
+  /* ===== 촬영 및 결과 화면 ===== */
+  function captureShot() {
+    deselectAllStickers(); // 테두리 제거
+    const flashEl = document.getElementById('flash');
+    flashEl.classList.remove('fire'); 
+    void flashEl.offsetWidth; 
+    flashEl.classList.add('fire');
+    setTimeout(() => {
+      // 실제 앱에서는 캔버스에 비디오와 스티커를 합성하여 그림을 그리는 로직이 들어갑니다.
+      // 본 데모에서는 스크린샷 캡쳐 로직이 복잡하므로 alert로 갈음하거나 합성된 느낌을 냅니다.
+      
+      // 간이 합성 로직 (html2canvas 등 없이 수동 캔버스 계산)
+      const vf = document.getElementById('viewfinder');
+      const canvas = document.createElement('canvas');
+      canvas.width = vf.clientWidth;
+      canvas.height = vf.clientHeight;
+      const ctx = canvas.getContext('2d');
+      
+      // 1. 비디오 그리기
+      if(camStream && videoEl.videoWidth) {
+        // ... 비디오 종횡비 계산해서 그리기 로직 (생략 - 화면에 보이도록 임시처리)
+        ctx.fillStyle = '#000';
+        ctx.fillRect(0,0,canvas.width,canvas.height);
+        ctx.drawImage(videoEl, 0, 0, canvas.width, canvas.height);
+      } else {
+        ctx.fillStyle = '#222';
+        ctx.fillRect(0,0,canvas.width,canvas.height);
+      }
+      // 2. 스티커들 그리기
+      const stickers = document.querySelectorAll('.canvas-sticker');
+      stickers.forEach(st => {
+        const img = st.querySelector('img');
+        if(img.complete && img.naturalHeight !== 0) {
+          const rect = st.getBoundingClientRect();
+          const vfRect = vf.getBoundingClientRect();
+          
+          const x = rect.left - vfRect.left;
+          const y = rect.top - vfRect.top;
+          
+          ctx.drawImage(img, x, y, rect.width, rect.height);
+        }
+      });
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
+      document.getElementById('shotImg').src = dataUrl;
+      document.getElementById('result').classList.add('open');
+    }, 200);
   }
-  function renderPhotos(){
-    if(!photoGrid) return;
-    if(!photos.length){ photoGrid.innerHTML='<div class="photo-empty">아직 촬영한 사진이 없습니다.<br>카메라로 촬영하면 여기에 모입니다.</div>'; return; }
-    photoGrid.innerHTML='';
-    photos.forEach(p=>{ const im=document.createElement('img'); im.src=p.photo; im.loading='lazy'; im.onclick=()=>openLightbox(p.photo); photoGrid.appendChild(im); });
+  function closeResult() {
+    document.getElementById('result').classList.remove('open');
   }
-  const lightbox=document.getElementById('lightbox'), lightboxImg=document.getElementById('lightboxImg');
-  function openLightbox(src){ if(!lightbox) return; lightboxImg.src=src; lightbox.classList.add('open'); }
-  function closeLightbox(){ if(lightbox) lightbox.classList.remove('open'); }
-  renderPhotos();
+  function savePhoto() {
+    alert("갤러리에 저장되었습니다! (데모)");
+  }
 </script>
 </body>
 </html>
