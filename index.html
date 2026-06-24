@@ -472,16 +472,23 @@
     spotName.textContent = s.name;
     spotMenu.classList.remove('open');
 
+    // 메뉴 활성 표시
     document.querySelectorAll('.spot-menu button').forEach(b=>b.classList.toggle('active', b.dataset.spot===key));
+    // 가이드선 그룹 전환
     document.querySelectorAll('.guide-group').forEach(g=>g.classList.toggle('active', g.dataset.spot===key));
+    // 배경
     vfEl.style.backgroundImage = s.bg;
+    // 추천 비율 자동 적용
     setRatio(s.ratio);
+    // 인물 가이드 크기·위치
     silhouette.style.width  = s.sil.w + 'px';
     silhouette.style.height = s.sil.h + 'px';
     silhouette.style.bottom = s.sil.bottom + 'px';
     silhouette.style.left   = s.sil.left + '%';
     silhouette.classList.remove('hidden','dim');
+    // 팁 내용(기본은 숨김 — 카메라 가리지 않도록)
     tipText.textContent = s.tip;
+    // 단계 초기화
     currentStep = 0;
     nextLabel.textContent = '📸 1단계 시작하기';
     document.querySelectorAll('.step').forEach(st=>st.classList.remove('active'));
@@ -545,7 +552,7 @@
       nextLabel.textContent = '🔄 1단계부터 다시';
     }
     document.querySelectorAll('.step').forEach(s=>s.classList.toggle('active', Number(s.dataset.step)===step));
-    showTip();
+    showTip();   // 단계 안내는 명시적 요청이므로 팁 표시
   }
   function nextStep(){
     currentStep = currentStep >= 3 ? 1 : currentStep + 1;
@@ -567,21 +574,135 @@
   const videoEl  = document.getElementById('cameraFeed');
   const camStart = document.getElementById('camStart');
   const camLabel = document.getElementById('camLabel');
-  const vw = videoEl.videoWidth, vh = videoEl.videoHeight;
-const targetAspect = vfEl.clientWidth / vfEl.clientHeight;
-const videoAspect  = vw / vh;
-let sx, sy, sw, sh;
-if(videoAspect > targetAspect){ sh = vh; sw = vh * targetAspect; sx = (vw - sw)/2; sy = 0; }
-else { sw = vw; sh = vw / targetAspect; sx = 0; sy = (vh - sh)/2; }
+  const camSub   = document.getElementById('camSub');
+  const camFlip  = document.getElementById('camFlip');
+  const camCopy  = document.getElementById('camCopy');
 
-const canvas = document.createElement('canvas');
-canvas.width = Math.round(sw); canvas.height = Math.round(sh);
-const ctx = canvas.getContext('2d');
-if(camFacing === 'user'){ ctx.translate(canvas.width, 0); ctx.scale(-1, 1); }
-ctx.drawImage(videoEl, sx, sy, sw, sh, 0, 0, canvas.width, canvas.height);
+  function isInAppBrowser(){
+    const ua = navigator.userAgent || '';
+    return /KAKAOTALK|Instagram|FBAN|FBAV|FB_IAB|NAVER\(inapp|DaumApps|Line\/|Snapchat|Twitter|everytimeApp|wadiz|Band/i.test(ua);
+  }
 
-const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
-shotImg.src = dataUrl;
-lastShotFile = dataURLtoFile(dataUrl, '픽스쳐_' + currentSpot + '_' + Date.now() + '.jpg');
+  function copyUrl(e){
+    if(e) e.stopPropagation();
+    const url = location.href;
+    const done = ()=>{ camCopy.textContent = '✅ 복사됨 — Safari 주소창에 붙여넣기'; };
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(url).then(done).catch(()=>{ window.prompt('아래 주소를 복사해 Safari·Chrome에서 열어주세요', url); });
+    }else{
+      window.prompt('아래 주소를 복사해 Safari·Chrome에서 열어주세요', url);
+    }
+  }
 
-setTimeout(()=>resultEl.classList.add('open'), 180);
+  function stopCamera(){ if(camStream){ camStream.getTracks().forEach(t=>t.stop()); camStream = null; } }
+
+  async function startCamera(){
+    if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+      if(isInAppBrowser()){
+        camLabel.textContent = '인앱 브라우저는 카메라를 지원하지 않습니다';
+        camSub.textContent   = '아래 "주소 복사" 후 Safari·Chrome 주소창에 붙여넣어 열어주세요';
+        camCopy.style.display = 'inline-block';
+      }else{
+        camLabel.textContent = '이 환경에서는 카메라를 켤 수 없습니다';
+        camSub.textContent   = 'HTTPS 주소 + 시스템 브라우저(Safari·Chrome)에서 열어주세요. 현재는 데모용 배경 표시 중.';
+      }
+      return;
+    }
+    camLabel.textContent = '카메라 연결 중…';
+    camSub.textContent   = '권한 요청 창에서 "허용"을 눌러주세요';
+    try{
+      stopCamera();
+      camStream = await navigator.mediaDevices.getUserMedia({ video:{ facingMode: camFacing }, audio:false });
+      videoEl.srcObject = camStream;
+      await videoEl.play().catch(()=>{});
+      videoEl.classList.add('live');
+      videoEl.classList.toggle('mirror', camFacing === 'user');
+      camStart.classList.add('hide');
+      camFlip.classList.add('show');
+    }catch(err){
+      let msg = '카메라를 사용할 수 없습니다';
+      let sub = '권한 허용 후 다시 탭하거나, 시스템 브라우저(HTTPS)에서 열어주세요';
+      if(isInAppBrowser()){
+        msg = '인앱 브라우저는 카메라를 지원하지 않습니다';
+        sub = '아래 "주소 복사" 후 Safari·Chrome 주소창에 붙여넣어 열어주세요';
+      }else if(err && err.name === 'NotAllowedError'){
+        msg = '카메라 권한이 거부되었습니다';
+        sub = '주소창 "AA → 웹사이트 설정 → 카메라 → 허용" 후 새로고침. (미리보기·iframe이면 단독 주소로 열기)';
+      }else if(err && err.name === 'NotFoundError'){
+        msg = '사용 가능한 카메라가 없습니다';
+        sub = '카메라가 있는 기기에서 열어주세요';
+      }
+      camLabel.textContent = msg;
+      camSub.textContent   = sub;
+      camCopy.style.display = 'inline-block';
+    }
+  }
+
+  async function flipCamera(){
+    camFacing = (camFacing === 'environment') ? 'user' : 'environment';
+    await startCamera();
+  }
+
+  /* ===== 사진 촬영 & 갤러리 저장 ===== */
+  let lastShotFile = null;
+  const flashEl  = document.getElementById('flash');
+  const resultEl = document.getElementById('result');
+  const shotImg  = document.getElementById('shotImg');
+
+  function captureShot(){
+    if(!camStream || !videoEl.videoWidth){
+      showToast('먼저 카메라를 켜주세요 (화면을 탭)');
+      return;
+    }
+    flashEl.classList.remove('fire'); void flashEl.offsetWidth; flashEl.classList.add('fire');
+
+    const vw = videoEl.videoWidth, vh = videoEl.videoHeight;
+    const targetAspect = vfEl.clientWidth / vfEl.clientHeight;
+    const videoAspect  = vw / vh;
+    let sx, sy, sw, sh;
+    if(videoAspect > targetAspect){ sh = vh; sw = vh * targetAspect; sx = (vw - sw)/2; sy = 0; }
+    else { sw = vw; sh = vw / targetAspect; sx = 0; sy = (vh - sh)/2; }
+
+    const canvas = document.createElement('canvas');
+    canvas.width = Math.round(sw); canvas.height = Math.round(sh);
+    const ctx = canvas.getContext('2d');
+    if(camFacing === 'user'){ ctx.translate(canvas.width, 0); ctx.scale(-1, 1); }
+    ctx.drawImage(videoEl, sx, sy, sw, sh, 0, 0, canvas.width, canvas.height);
+
+    const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
+    shotImg.src = dataUrl;
+    lastShotFile = dataURLtoFile(dataUrl, '픽스쳐_' + currentSpot + '_' + Date.now() + '.jpg');
+
+    setTimeout(()=>resultEl.classList.add('open'), 180);
+  }
+
+  function dataURLtoFile(dataurl, filename){
+    const arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1];
+    const bstr = atob(arr[1]); let n = bstr.length; const u8 = new Uint8Array(n);
+    while(n--){ u8[n] = bstr.charCodeAt(n); }
+    return new File([u8], filename, { type: mime });
+  }
+
+  async function savePhoto(){
+    if(!lastShotFile) return;
+    if(navigator.canShare && navigator.canShare({ files:[lastShotFile] })){
+      try{ await navigator.share({ files:[lastShotFile], title:'충청 픽스쳐' }); return; }
+      catch(err){ if(err && err.name === 'AbortError') return; }
+    }
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(lastShotFile);
+    a.download = lastShotFile.name;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(a.href), 1000);
+  }
+
+  function closeResult(){ resultEl.classList.remove('open'); }
+
+  /* ===== 초기화 ===== */
+  selectSpot('meta');
+  if(isInAppBrowser()){
+    camSub.textContent = '인앱 브라우저 감지 — 카메라가 안 되면 Safari·Chrome로 열어주세요';
+  }
+</script>
+</body>
+</html>
