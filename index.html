@@ -21,8 +21,13 @@
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html,body{margin:0;height:100%;background:#000;color:var(--ink);
     font-family:"Pretendard","Apple SD Gothic Neo","Noto Sans KR",system-ui,sans-serif;
-    overscroll-behavior:none;user-select:none;-webkit-user-select:none}
-  #app{position:fixed;inset:0;overflow:hidden}
+    overflow:hidden;overscroll-behavior:none;touch-action:none;
+    user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;
+    -webkit-text-size-adjust:100%;text-size-adjust:100%}
+  body{position:fixed;inset:0;width:100%}
+  #app{position:fixed;top:0;left:0;width:100%;height:100vh;height:100svh;height:100dvh;overflow:hidden}
+  img{-webkit-user-drag:none;user-drag:none;pointer-events:none}
+  button{touch-action:manipulation}
   .screen{position:absolute;inset:0;display:none}
   .screen.on{display:block}
 
@@ -81,9 +86,9 @@
   .sticker .ring{position:absolute;inset:-12px;border:1.5px dashed rgba(255,255,255,0);
     border-radius:14px;pointer-events:none}
   .sticker.sel .ring{border-color:rgba(255,255,255,.9)}
-  .handle{position:absolute;width:32px;height:32px;border-radius:50%;
+  .handle{position:absolute;width:36px;height:36px;border-radius:50%;
     display:none;place-items:center;cursor:pointer;border:2px solid #fff;
-    color:#111;font-size:14px;font-weight:900;touch-action:none;
+    color:#111;font-size:15px;font-weight:900;touch-action:none;-webkit-touch-callout:none;
     box-shadow:0 2px 6px rgba(0,0,0,.4)}
   .sticker.sel .handle{display:grid}
   .h-tr{left:100%;top:100%;background:var(--accent2)}   /* 크기+회전 */
@@ -204,6 +209,30 @@
     padding:11px 18px;border-radius:999px;font-size:13px;font-weight:700;z-index:120;
     opacity:0;transition:.3s;pointer-events:none;max-width:86vw;text-align:center}
   .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  /* ===== 모바일 반응형 ===== */
+  @media (max-width:380px){
+    #mapStage{padding:170px 12px 84px}
+    .spot{width:64px}
+    .spot .frame{width:54px;height:54px}
+    .spot .name{font-size:10px}
+    .sideBtn{width:56px;height:56px;border-radius:16px}
+    #shutter{width:72px;height:72px}
+    .pill,.chip{height:34px}
+  }
+  @media (max-height:680px){
+    #bottomBar{padding-top:12px;padding-bottom:calc(env(safe-area-inset-bottom) + 12px)}
+  }
+  /* 휴대폰 가로 모드 → 세로 전환 안내 */
+  #rotateHint{display:none}
+  @media (orientation:landscape) and (max-height:520px){
+    #rotateHint{display:flex;position:fixed;inset:0;z-index:200;background:#0c0f13;
+      flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:24px}
+    #rotateHint .rot{font-size:46px;animation:rotw 1.9s ease-in-out infinite}
+    #rotateHint p{margin:0;color:var(--muted);font-size:13.5px;font-weight:700;line-height:1.6}
+    #rotateHint b{display:block;color:var(--ink);font-size:17px;margin-bottom:4px}
+  }
+  @keyframes rotw{0%,18%{transform:rotate(0)}50%,68%{transform:rotate(-90deg)}100%{transform:rotate(0)}}
 </style>
 </head>
 <body>
@@ -308,6 +337,7 @@
   </div>
 </div>
 
+<div id="rotateHint"><div class="rot">📱</div><p><b>세로 모드로 돌려주세요</b>충청 픽스쳐는 세로 화면에 최적화되어 있어요</p></div>
 <div class="toast" id="toast"></div>
 <canvas id="capCanvas" style="display:none"></canvas>
 
