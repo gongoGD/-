@@ -613,17 +613,34 @@ function registerSpot(spotId,thumb){
   toast(isNew? `✅ ${s.name} 인증! (${doneCount()}/10)` : `${s.name} 사진을 갱신했습니다`);
   if(doneCount()>=10) setTimeout(openCoupon,700);
 }
-function renderMap(){
-  const inner=$("#mapInner"); inner.querySelectorAll(".spot").forEach(n=>n.remove());
+function spotLayout(W,H){
   const lats=SPOTS.map(s=>s.lat), lngs=SPOTS.map(s=>s.lng);
   const minLa=Math.min(...lats),maxLa=Math.max(...lats),minLn=Math.min(...lngs),maxLn=Math.max(...lngs);
-  const px=s=>8+(s.lng-minLn)/((maxLn-minLn)||1)*84;
-  const py=s=>8+(maxLa-s.lat)/((maxLa-minLa)||1)*84;
-  const pts=SPOTS.map(s=>`${px(s).toFixed(1)},${py(s).toFixed(1)}`).join(" ");
+  const spanLa=(maxLa-minLa)||1, spanLn=(maxLn-minLn)||1, mX=44, mY=50;
+  const P=SPOTS.map(s=>({ x:mX+(s.lng-minLn)/spanLn*(W-2*mX), y:mY+(maxLa-s.lat)/spanLa*(H-2*mY) }));
+  const fs=(window.innerWidth<=380?54:64), MIN=fs+24;   // 액자 최소 중심 간격(px)
+  for(let it=0; it<200; it++){
+    let moved=false;
+    for(let i=0;i<P.length;i++) for(let j=i+1;j<P.length;j++){
+      let dx=P[j].x-P[i].x, dy=P[j].y-P[i].y, d=Math.hypot(dx,dy);
+      if(d<0.01){ dx=(j-i); dy=1; d=Math.hypot(dx,dy); }
+      if(d<MIN){ const push=(MIN-d)/2, ux=dx/d, uy=dy/d;
+        P[i].x-=ux*push; P[i].y-=uy*push; P[j].x+=ux*push; P[j].y+=uy*push; moved=true; }
+    }
+    for(const p of P){ p.x=Math.max(mX,Math.min(W-mX,p.x)); p.y=Math.max(mY,Math.min(H-mY,p.y)); }
+    if(!moved) break;
+  }
+  return P;
+}
+function renderMap(){
+  const inner=$("#mapInner"); inner.querySelectorAll(".spot").forEach(n=>n.remove());
+  const W=inner.clientWidth||340, H=inner.clientHeight||560;
+  const P=spotLayout(W,H);
+  const pts=P.map(p=>`${(p.x/W*100).toFixed(1)},${(p.y/H*100).toFixed(1)}`).join(" ");
   $("#trailSvg").innerHTML=`<polyline points="${pts}" fill="none" stroke="var(--trail)" stroke-width="0.7" stroke-dasharray="2 2.4" stroke-linecap="round" opacity="0.55"/>`;
   SPOTS.forEach((s,i)=>{
     const el=document.createElement("div"); el.className="spot"+(quest[s.id]?" done":"");
-    el.style.left=px(s)+"%"; el.style.top=py(s)+"%";
+    el.style.left=P[i].x+"px"; el.style.top=P[i].y+"px";
     const inside=quest[s.id]? `<img src="${quest[s.id].thumb}" alt="">` : `<span class="ph">${i+1}</span>`;
     el.innerHTML=`<div class="frame"><span class="num">${i+1}</span>${inside}<span class="chk">✓</span></div><div class="name">${s.name}</div>`;
     el.onclick=()=>{
