@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>충청 픽스쳐 · 청남대 메타세쿼이아 숲길</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+<style>
+  :root{
+    --neon:#39ff14;
+    --neon-soft:#4ade80;
+    --bg-page:#050607;
+    --bg-phone:#16181b;
+    --bg-panel:#1d2024;
+    --bg-elev:#26292e;
+    --line:#33373d;
+    --txt:#f2f4f5;
+    --txt-dim:#9aa0a6;
+    --red:#ef4444;
+    --green:#22c55e;
+    --radius:14px;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+
+  body{
+    font-family:"Pretendard","Pretendard Variable",-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+    background:
+      radial-gradient(1200px 600px at 50% -10%, #11150f 0%, transparent 60%),
+      var(--bg-page);
+    color:var(--txt);
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px 12px;
+  }
+
+  /* ===== 폰 프레임 ===== */
+  .phone{
+    position:relative;
+    width:420px;
+    max-height:850px;
+    background:var(--bg-phone);
+    border-radius:30px;
+    border:1px solid #2a2e33;
+    box-shadow:
+      0 0 0 8px #0b0c0e,
+      0 30px 70px rgba(0,0,0,0.65),
+      0 0 60px rgba(57,255,20,0.05);
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+  }
+
+  /* ===== 헤더 ===== */
+  .header{
+    flex-shrink:0;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:16px 18px 12px;
+    background:linear-gradient(180deg,#1b1e22 0%,var(--bg-phone) 100%);
+  }
+  .header h1{
+    font-size:15px;
+    font-weight:700;
+    letter-spacing:-0.3px;
+    display:flex;
+    align-items:center;
+    gap:7px;
+  }
+  .close-btn{
+    width:30px;height:30px;
+    border-radius:50%;
+    border:none;
+    background:var(--bg-elev);
+    color:var(--txt-dim);
+    font-size:18px;
+    line-height:1;
+    cursor:pointer;
+    transition:.18s;
+  }
+  .close-btn:hover{background:#34383e;color:var(--txt);}
+
+  /* ===== 스텝 바 ===== */
+  .stepbar{
+    flex-shrink:0;
+    display:flex;
+    align-items:center;
+    padding:4px 14px 14px;
+    gap:4px;
+  }
+  .step{
+    flex:1;
+    text-align:center;
+    font-size:11px;
+    font-weight:600;
+    color:var(--txt-dim);
+    background:var(--bg-panel);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:8px 4px;
+    transition:.25s;
+  }
+  .step.active{
+    color:#0a0f07;
+    background:var(--neon);
+    border-color:var(--neon);
+    box-shadow:0 0 14px rgba(57,255,20,0.45);
+  }
+  .step-arrow{color:#4a4f55;font-size:13px;flex:0 0 auto;}
+
+  /* ===== 스크롤 본문 ===== */
+  .scroll{
+    flex:1;
+    min-height:0;
+    overflow-y:auto;
+    overflow-x:hidden;
+    scrollbar-width:thin;
+    scrollbar-color:#3a3f45 transparent;
+  }
+  .scroll::-webkit-scrollbar{width:6px;}
+  .scroll::-webkit-scrollbar-thumb{background:#3a3f45;border-radius:3px;}
+
+  /* ===== 뷰파인더 ===== */
+  #viewfinder{
+    position:relative;
+    width:420px;
+    height:560px; /* 4:3 기본 */
+    background-color:#0e1a10;
+    background-image:
+      linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.05) 40%, rgba(0,0,0,0.45) 100%),
+      url("https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?auto=format&fit=crop&w=840&q=80");
+    background-size:cover;
+    background-position:center;
+    transition:all 0.3s ease;
+    overflow:hidden;
+  }
+
+  /* 라이브 카메라 피드 (가이드보다 아래, 배경 이미지 위) */
+  #cameraFeed{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    z-index:1;
+    background:#000;
+    display:none;
+  }
+  #cameraFeed.live{display:block;}
+  #cameraFeed.mirror{transform:scaleX(-1);} /* 전면 카메라 좌우반전 */
+
+  /* 카메라 시작 / 상태 안내 (탭하여 시작) */
+  .cam-start{
+    position:absolute;
+    inset:0;
+    z-index:7;               /* 탭 가능해야 하므로 가이드(2)보다 위 */
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:12px;
+    background:rgba(0,0,0,0.38);
+    cursor:pointer;
+    transition:opacity .25s;
+  }
+  .cam-start.hide{opacity:0;pointer-events:none;}
+  .cam-start .cam-icon{
+    width:62px;height:62px;
+    border-radius:50%;
+    background:rgba(255,255,255,0.94);
+    display:flex;align-items:center;justify-content:center;
+    font-size:28px;
+    box-shadow:0 0 26px rgba(57,255,20,0.4);
+  }
+  .cam-start .cam-label{
+    font-size:13px;font-weight:700;color:#fff;
+    background:rgba(0,0,0,0.5);
+    padding:7px 15px;border-radius:999px;
+    max-width:82%;text-align:center;line-height:1.45;
+  }
+  .cam-start .cam-sub{
+    font-size:11px;color:#d2d6da;
+    max-width:80%;text-align:center;line-height:1.45;
+  }
+  .cam-copy{
+    margin-top:6px;
+    border:1px solid rgba(255,255,255,0.45);
+    background:rgba(255,255,255,0.14);
+    color:#fff;font-size:12px;font-weight:700;
+    padding:9px 16px;border-radius:999px;cursor:pointer;
+    backdrop-filter:blur(2px);display:none;
+  }
+  .cam-copy:active{transform:scale(0.96);}
+
+  /* 전/후면 전환 버튼 */
+  .cam-flip{
+    position:absolute;
+    top:12px;right:12px;
+    z-index:8;
+    width:38px;height:38px;
+    border:none;border-radius:50%;
+    background:rgba(0,0,0,0.5);
+    color:#fff;font-size:17px;
+    cursor:pointer;display:none;
+    backdrop-filter:blur(2px);
+  }
+  .cam-flip.show{display:block;}
+
+  /* 투명 가이드 레이어 */
+  .guides{
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    z-index:2;
+  }
+
+  /* 소실점 SVG */
+  .vp-svg{position:absolute;inset:0;width:100%;height:100%;}
+  #vanishingLines{transition:opacity .3s ease;}
+  #vanishingLines line{
+    stroke:#ffffff;
+    stroke-width:2;
+    stroke-opacity:0.5;
+    vector-effect:non-scaling-stroke;
+  }
+
+  /* 3x3 격자점 (교차점 4개) */
+  .grid-dot{
+    position:absolute;
+    width:4px;height:4px;
+    border-radius:50%;
+    background:#ffffff;
+    opacity:0.5;
+    transform:translate(-50%,-50%);
+    box-shadow:0 0 2px rgba(0,0,0,0.6);
+  }
+  .grid-dot.tl{left:33.333%;top:33.333%;}
+  .grid-dot.tr{left:66.667%;top:33.333%;}
+  .grid-dot.bl{left:33.333%;top:66.667%;}
+  .grid-dot.br{left:66.667%;top:66.667%;}
+
+  /* 인물 실루엣 */
+  #silhouette{
+    position:absolute;
+    bottom:18px;
+    left:50%;
+    transform:translateX(-50%);
+    width:86px;
+    height:150px;
+    border:2px solid var(--neon-soft);
+    background:rgba(74,222,128,0.18);
+    border-radius:44px 44px 12px 12px;
+    display:flex;
+    align-items:flex-end;
+    justify-content:center;
+    padding-bottom:12px;
+    color:#d8ffe0;
+    font-size:11px;
+    font-weight:600;
+    opacity:1;
+    transition:all 0.3s ease;
+    box-shadow:0 0 16px rgba(74,222,128,0.25);
+  }
+  #silhouette::before{
+    content:"";
+    position:absolute;
+    top:14px;left:50%;
+    transform:translateX(-50%);
+    width:30px;height:30px;
+    border-radius:50%;
+    background:rgba(74,222,128,0.28);
+    border:2px solid var(--neon-soft);
+  }
+  #silhouette.hidden{opacity:0;}
+  #silhouette.dim{opacity:0.7;}
+  #silhouette.lowangle{height:206px;bottom:2px;width:96px;}
+
+  /* 실시간 팁 카드 */
+  #tip-card{
+    position:absolute;
+    bottom:96px;
+    left:50%;
+    transform:translateX(-50%);
+    width:88%;
+    background:rgba(0,0,0,0.6);
+    backdrop-filter:blur(3px);
+    border:1px solid rgba(255,255,255,0.1);
+    border-radius:12px;
+    padding:11px 13px;
+    color:#fff;
+    font-size:12.5px;
+    line-height:1.45;
+    z-index:5; /* 격자점·선보다 위 */
+    display:flex;
+    gap:8px;
+    align-items:flex-start;
+  }
+  #tip-card .bulb{flex:0 0 auto;font-size:14px;line-height:1.3;}
+
+  /* 상단 토스트 */
+  .toast{
+    position:absolute;
+    top:14px;left:50%;
+    transform:translateX(-50%) translateY(-12px);
+    background:var(--neon);
+    color:#0a0f07;
+    font-size:12.5px;
+    font-weight:700;
+    padding:9px 16px;
+    border-radius:999px;
+    z-index:9;
+    opacity:0;
+    pointer-events:none;
+    transition:.3s;
+    box-shadow:0 6px 20px rgba(57,255,20,0.4);
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+  /* ===== 하단 패널 ===== */
+  .panel{padding:16px 16px 22px;background:var(--bg-phone);}
+
+  .score-label{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    font-size:12.5px;
+    font-weight:600;
+    margin-bottom:7px;
+  }
+  .score-label b{font-size:14px;}
+  #scoreVal{color:var(--red);transition:color .3s;}
+  .gauge{
+    height:9px;
+    background:var(--bg-elev);
+    border-radius:999px;
+    overflow:hidden;
+  }
+  #gaugeFill{
+    height:100%;
+    width:45%;
+    background:var(--red);
+    border-radius:999px;
+    transition:width .4s ease, background .4s ease;
+  }
+
+  .section-title{
+    font-size:11px;
+    color:var(--txt-dim);
+    font-weight:600;
+    margin:16px 2px 7px;
+    letter-spacing:.2px;
+  }
+
+  /* 구도 선택 탭 */
+  .comp-tabs{display:flex;gap:8px;}
+  .comp-tab{
+    flex:1;
+    font-size:12px;
+    font-weight:600;
+    color:var(--txt-dim);
+    background:var(--bg-panel);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:10px 6px;
+    cursor:pointer;
+    transition:.2s;
+  }
+  .comp-tab.active{
+    color:var(--neon);
+    border-color:var(--neon);
+    background:rgba(57,255,20,0.08);
+  }
+
+  /* 비율 칩 */
+  .ratio-row{display:flex;gap:8px;}
+  .ratio-chip{
+    flex:1;
+    font-size:12px;
+    font-weight:600;
+    color:var(--txt-dim);
+    background:var(--bg-panel);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:9px 6px;
+    cursor:pointer;
+    transition:.2s;
+  }
+  .ratio-chip.active{
+    color:var(--txt);
+    border-color:var(--neon-soft);
+    background:rgba(74,222,128,0.1);
+  }
+
+  /* 다음 단계 버튼 */
+  .next-btn{
+    width:100%;
+    margin-top:16px;
+    padding:13px;
+    border:none;
+    border-radius:12px;
+    background:var(--bg-elev);
+    color:var(--txt);
+    font-size:13.5px;
+    font-weight:700;
+    cursor:pointer;
+    transition:.2s;
+    display:flex;align-items:center;justify-content:center;gap:7px;
+  }
+  .next-btn:hover{background:#31353b;}
+
+  /* 최하단 조작부 */
+  .controls{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-top:18px;
+    padding:0 4px;
+  }
+  .ctrl-sim{
+    width:78px;
+    font-size:10.5px;
+    font-weight:600;
+    line-height:1.3;
+    color:var(--txt-dim);
+    background:transparent;
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:9px 6px;
+    cursor:pointer;
+    transition:.2s;
+  }
+  .ctrl-sim:hover{border-color:var(--neon-soft);color:var(--txt);}
+  .shutter{
+    width:68px;height:68px;
+    border-radius:50%;
+    background:#fff;
+    border:4px solid #c9ccd1;
+    box-shadow:0 0 0 3px var(--bg-phone),0 0 24px rgba(255,255,255,0.25);
+    cursor:pointer;
+    transition:.12s;
+  }
+  .shutter:active{transform:scale(0.92);box-shadow:0 0 0 3px var(--bg-phone),0 0 12px rgba(255,255,255,0.4);}
+  .gallery{
+    width:52px;height:52px;
+    border-radius:50%;
+    background:var(--bg-elev);
+    border:1px solid var(--line);
+    color:var(--txt-dim);
+    font-size:20px;
+    cursor:pointer;
+    transition:.2s;
+  }
+  .gallery:hover{background:#31353b;}
+
+  /* ===== 리워드 모달 ===== */
+  .overlay{
+    position:absolute;
+    inset:0;
+    background:rgba(0,0,0,0.72);
+    backdrop-filter:blur(2px);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:20;
+    opacity:0;
+    visibility:hidden;
+    transition:opacity .3s ease,visibility .3s;
+  }
+  .overlay.open{opacity:1;visibility:visible;}
+  .modal{
+    width:84%;
+    background:#fff;
+    color:#1a1a1a;
+    border-radius:20px;
+    padding:24px 22px 20px;
+    text-align:center;
+    transform:translateY(16px) scale(0.94);
+    transition:transform .32s cubic-bezier(.2,.9,.3,1.2);
+  }
+  .overlay.open .modal{transform:translateY(0) scale(1);}
+  .modal h2{font-size:18px;margin-bottom:8px;letter-spacing:-0.4px;}
+  .modal p{font-size:13px;line-height:1.55;color:#444;margin-bottom:18px;}
+  .coupon{
+    border:2px dashed #22a35a;
+    border-radius:14px;
+    padding:18px 12px;
+    background:#f3fbf5;
+    margin-bottom:20px;
+  }
+  .coupon .tag{font-size:11px;color:#888;margin-bottom:6px;}
+  .coupon .deal{font-size:16px;font-weight:800;color:#159a4e;letter-spacing:-0.3px;}
+  .coupon .deal small{display:block;font-size:11px;font-weight:600;color:#22a35a;margin-top:4px;}
+  .modal-btn{
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:12px;
+    background:#159a4e;
+    color:#fff;
+    font-size:14px;
+    font-weight:700;
+    cursor:pointer;
+    transition:.2s;
+  }
+  .modal-btn:hover{background:#118043;}
+
+  @media (prefers-reduced-motion:reduce){
+    *{transition:none !important;}
+  }
+</style>
+</head>
+<body>
+
+<div class="phone">
+
+  <!-- 헤더 -->
+  <div class="header">
+    <h1>🌲 청남대 메타세쿼이아 숲길</h1>
+    <button class="close-btn" onclick="closeApp()" aria-label="닫기">×</button>
+  </div>
+
+  <!-- 스텝 바 -->
+  <div class="stepbar" id="stepbar">
+    <div class="step" data-step="1">1. 배경 수평</div>
+    <div class="step-arrow">➡️</div>
+    <div class="step" data-step="2">2. 인물 대칭</div>
+    <div class="step-arrow">➡️</div>
+    <div class="step" data-step="3">3. 찰칵!</div>
+  </div>
+
+  <div class="scroll">
+
+    <!-- 뷰파인더 -->
+    <div id="viewfinder">
+      <!-- 라이브 카메라 (실패 시 배경 숲 이미지로 자동 폴백) -->
+      <video id="cameraFeed" autoplay playsinline muted></video>
+      <button class="cam-flip" id="camFlip" onclick="flipCamera()" aria-label="전후면 전환">🔄</button>
+
+      <!-- 카메라 시작 / 상태 안내 -->
+      <div class="cam-start" id="camStart" onclick="startCamera()">
+        <div class="cam-icon">📷</div>
+        <div class="cam-label" id="camLabel">탭하여 실시간 카메라 시작</div>
+        <div class="cam-sub" id="camSub">가이드가 실제 카메라 화면 위에 표시됩니다</div>
+        <button class="cam-copy" id="camCopy" onclick="copyUrl(event)">🔗 주소 복사 → Safari에 붙여넣기</button>
+      </div>
+
+      <div class="toast" id="toast">셔터를 눌러보세요!</div>
+
+      <div class="guides">
+        <!-- 소실점 실선 (SVG, 비율 변경에 반응) -->
+        <svg class="vp-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+          <g id="vanishingLines" opacity="1">
+            <line x1="0"  y1="100" x2="50" y2="24"/>
+            <line x1="100" y1="100" x2="50" y2="24"/>
+            <line x1="28" y1="100" x2="50" y2="24"/>
+            <line x1="72" y1="100" x2="50" y2="24"/>
+          </g>
+        </svg>
+
+        <!-- 3x3 격자 교차점 4개 -->
+        <div class="grid-dot tl"></div>
+        <div class="grid-dot tr"></div>
+        <div class="grid-dot bl"></div>
+        <div class="grid-dot br"></div>
+
+        <!-- 인물 실루엣 -->
+        <div id="silhouette">인물 위치</div>
+
+        <!-- 실시간 팁 카드 -->
+        <div id="tip-card">
+          <span class="bulb">💡</span>
+          <span id="tipText">영화 포스터처럼 소실점에 인물을 세워 메타세쿼이아 숲길의 깊이감을 살려보세요.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 하단 패널 -->
+    <div class="panel">
+
+      <!-- 구도 일치율 스코어바 -->
+      <div class="score-label">
+        <span>구도 일치율</span>
+        <b id="scoreVal">45%</b>
+      </div>
+      <div class="gauge"><div id="gaugeFill"></div></div>
+
+      <!-- 구도 선택 탭 -->
+      <div class="section-title">구도 추천</div>
+      <div class="comp-tabs">
+        <button class="comp-tab active" data-comp="movie" onclick="setComposition('movie')">#영화_포스터_구도</button>
+        <button class="comp-tab" data-comp="tall" onclick="setComposition('tall')">#키가_2미터_구도</button>
+      </div>
+
+      <!-- 비율 선택 -->
+      <div class="section-title">사진 비율</div>
+      <div class="ratio-row">
+        <button class="ratio-chip active" data-ratio="4:3" onclick="setRatio('4:3')">4:3</button>
+        <button class="ratio-chip" data-ratio="1:1" onclick="setRatio('1:1')">1:1</button>
+        <button class="ratio-chip" data-ratio="16:9" onclick="setRatio('16:9')">16:9</button>
+      </div>
+
+      <!-- 다음 단계 -->
+      <button class="next-btn" onclick="nextStep()">
+        <span id="nextLabel">📸 1단계 시작하기</span>
+      </button>
+
+      <!-- 최하단 조작부 -->
+      <div class="controls">
+        <button class="ctrl-sim" onclick="adjustComposition()">구도 조절<br>(시뮬레이션)</button>
+        <button class="shutter" onclick="openModal()" aria-label="셔터"></button>
+        <button class="gallery" aria-label="갤러리">🖼️</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 리워드 모달 -->
+  <div class="overlay" id="overlay">
+    <div class="modal">
+      <h2>🎉 명품 구도 매칭 성공!</h2>
+      <p>인스타 핫플과 구도가 95% 일치했습니다!<br>청남대 정문 앞 <b>[숲속 메타 카페]</b>에서 즉시 사용 가능한 달콤한 쿠폰을 드려요! ☕</p>
+      <div class="coupon">
+        <div class="tag">SO COOL · 숲속 메타 카페</div>
+        <div class="deal">[음료 주문 시]<small>크로플 무료 증정권</small></div>
+      </div>
+      <button class="modal-btn" onclick="closeModal()">쿠폰 사용 및 길찾기 →</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  /* ===== 상태 ===== */
+  let currentStep = 0;            // 0=대기, 1~3=촬영 단계
+  let currentComp = 'movie';     // 구도
+
+  const tipText   = document.getElementById('tipText');
+  const scoreVal  = document.getElementById('scoreVal');
+  const gaugeFill = document.getElementById('gaugeFill');
+  const silhouette= document.getElementById('silhouette');
+  const vpLines   = document.getElementById('vanishingLines');
+  const toast     = document.getElementById('toast');
+  const nextLabel = document.getElementById('nextLabel');
+
+  /* ===== 스코어 갱신 ===== */
+  function setScore(pct, color){
+    scoreVal.textContent = pct + '%';
+    gaugeFill.style.width = pct + '%';
+    gaugeFill.style.background = color;
+    scoreVal.style.color = color;
+  }
+
+  /* ===== 토스트 ===== */
+  function showToast(msg){
+    toast.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(toast._t);
+    toast._t = setTimeout(()=>toast.classList.remove('show'), 2200);
+  }
+
+  /* ===== 비율 변경 ===== */
+  function setRatio(ratio){
+    const vf = document.getElementById('viewfinder');
+    const h = {'4:3':560, '1:1':420, '16:9':746}[ratio];
+    vf.style.height = h + 'px';
+    document.querySelectorAll('.ratio-chip').forEach(c=>{
+      c.classList.toggle('active', c.dataset.ratio === ratio);
+    });
+  }
+
+  /* ===== 구도 선택 ===== */
+  function setComposition(comp){
+    currentComp = comp;
+    document.querySelectorAll('.comp-tab').forEach(t=>{
+      t.classList.toggle('active', t.dataset.comp === comp);
+    });
+
+    if(comp === 'movie'){
+      tipText.textContent = '영화 포스터처럼 소실점에 인물을 세워 메타세쿼이아 숲길의 깊이감을 살려보세요.';
+      silhouette.classList.remove('lowangle','hidden');
+      silhouette.classList.remove('dim');
+      setScore(45, 'var(--red)');
+    }else{
+      tipText.textContent = '[거꾸로 들기 팁] 스마트폰을 완전히 거꾸로 뒤집어서 아래에서 위로 올려다보며 찍으면 다리가 2미터처럼 길어집니다!';
+      silhouette.classList.remove('hidden','dim');
+      silhouette.classList.add('lowangle');
+      setScore(60, 'var(--red)');
+    }
+  }
+
+  /* ===== 단계별 촬영 ===== */
+  function applyStep(step){
+    const setLineOpacity = v => vpLines.querySelectorAll('line').forEach(l=>l.setAttribute('stroke-opacity', v));
+
+    if(step === 1){
+      setLineOpacity('0.5');                  // 소실점 선 50% 선명
+      silhouette.classList.add('hidden');     // 실루엣 숨김
+      silhouette.classList.remove('dim','lowangle');
+      tipText.textContent = '1단계: 메타세쿼이아 나무들이 가운데 한 점으로 모이게 폰의 수평을 맞추세요.';
+      setScore(45, 'var(--red)');
+      nextLabel.textContent = '➡️ 2단계로 (인물 배치)';
+    }
+    else if(step === 2){
+      setLineOpacity('0.2');                  // 선 투명도 20%로 낮춤
+      silhouette.classList.remove('hidden','lowangle');
+      silhouette.classList.add('dim');        // 70% 활성
+      tipText.textContent = '2단계: 이제 친구를 정중앙 아래의 녹색 실루엣 박스 안에 배치하세요.';
+      setScore(70, 'var(--red)');
+      nextLabel.textContent = '➡️ 3단계로 (촬영 준비)';
+    }
+    else if(step === 3){
+      setLineOpacity('0.5');                  // 모든 요소 결합
+      silhouette.classList.remove('hidden','dim','lowangle');
+      tipText.textContent = '3단계: 준비 완료! 구도가 완벽합니다. 친구가 가볍게 걸을 때 셔터를 누르세요.';
+      setScore(90, 'var(--green)');
+      nextLabel.textContent = '🔄 1단계부터 다시';
+    }
+
+    // 스텝 바 하이라이트
+    document.querySelectorAll('.step').forEach(s=>{
+      s.classList.toggle('active', Number(s.dataset.step) === step);
+    });
+  }
+
+  function nextStep(){
+    currentStep = currentStep >= 3 ? 1 : currentStep + 1;
+    applyStep(currentStep);
+  }
+
+  /* ===== 구도 조절(시뮬레이션) ===== */
+  function adjustComposition(){
+    setScore(95, 'var(--green)');
+    showToast('셔터를 눌러보세요!');
+  }
+
+  /* ===== 리워드 모달 ===== */
+  function openModal(){
+    document.getElementById('overlay').classList.add('open');
+  }
+  function closeModal(){
+    document.getElementById('overlay').classList.remove('open');
+  }
+
+  /* ===== 닫기 ===== */
+  function closeApp(){
+    showToast('데모 종료 — 새로고침 시 재시작');
+  }
+
+  /* ===== 라이브 카메라 ===== */
+  let camStream = null;
+  let camFacing = 'environment';     // 후면 카메라 기본
+  const videoEl  = document.getElementById('cameraFeed');
+  const camStart = document.getElementById('camStart');
+  const camLabel = document.getElementById('camLabel');
+  const camSub   = document.getElementById('camSub');
+  const camFlip  = document.getElementById('camFlip');
+  const camCopy  = document.getElementById('camCopy');
+
+  // 카메라를 막는 인앱 브라우저(카톡·인스타·페북·네이버·라인 등) 감지
+  function isInAppBrowser(){
+    const ua = navigator.userAgent || '';
+    return /KAKAOTALK|Instagram|FBAN|FBAV|FB_IAB|NAVER\(inapp|DaumApps|Line\/|Snapchat|Twitter|everytimeApp|wadiz|Band/i.test(ua);
+  }
+
+  // 현재 주소 복사 → 사용자가 Safari/Chrome 주소창에 붙여넣어 열도록
+  function copyUrl(e){
+    if(e) e.stopPropagation();   // 시작 div의 클릭(카메라 시작)과 분리
+    const url = location.href;
+    const done = ()=>{ camCopy.textContent = '✅ 복사됨 — Safari 주소창에 붙여넣기'; };
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(url).then(done).catch(()=>{ window.prompt('아래 주소를 복사해 Safari·Chrome에서 열어주세요', url); });
+    }else{
+      window.prompt('아래 주소를 복사해 Safari·Chrome에서 열어주세요', url);
+    }
+  }
+
+  function stopCamera(){
+    if(camStream){ camStream.getTracks().forEach(t=>t.stop()); camStream = null; }
+  }
+
+  async function startCamera(){
+    // secure context / API 지원 여부 확인 (file://·HTTP·인앱·미지원 시 폴백)
+    if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+      if(isInAppBrowser()){
+        camLabel.textContent = '인앱 브라우저는 카메라를 지원하지 않습니다';
+        camSub.textContent   = '아래 "주소 복사" 후 Safari·Chrome 주소창에 붙여넣어 열어주세요';
+        camCopy.style.display = 'inline-block';
+      }else{
+        camLabel.textContent = '이 환경에서는 카메라를 켤 수 없습니다';
+        camSub.textContent   = 'HTTPS 주소 + 시스템 브라우저(Safari·Chrome)에서 열어주세요. 현재는 데모용 숲 이미지 표시 중.';
+      }
+      return;
+    }
+    camLabel.textContent = '카메라 연결 중…';
+    camSub.textContent   = '권한 요청 창에서 "허용"을 눌러주세요';
+    try{
+      stopCamera();
+      camStream = await navigator.mediaDevices.getUserMedia({
+        video:{ facingMode: camFacing },
+        audio:false
+      });
+      videoEl.srcObject = camStream;
+      await videoEl.play().catch(()=>{});   // iOS 자동재생 대비
+      videoEl.classList.add('live');
+      videoEl.classList.toggle('mirror', camFacing === 'user');
+      camStart.classList.add('hide');       // 시작화면 숨김 → 가이드가 카메라 위 노출
+      camFlip.classList.add('show');
+    }catch(err){
+      let msg = '카메라를 사용할 수 없습니다';
+      let sub = '권한 허용 후 다시 탭하거나, 시스템 브라우저(HTTPS)에서 열어주세요';
+      if(isInAppBrowser()){
+        msg = '인앱 브라우저는 카메라를 지원하지 않습니다';
+        sub = '아래 "주소 복사" 후 Safari·Chrome 주소창에 붙여넣어 열어주세요';
+      }else if(err && err.name === 'NotAllowedError'){
+        msg = '카메라 권한이 거부되었습니다';
+        sub = '주소창 "AA → 웹사이트 설정 → 카메라 → 허용" 후 새로고침. (미리보기·iframe이면 단독 주소로 열기)';
+      }else if(err && err.name === 'NotFoundError'){
+        msg = '사용 가능한 카메라가 없습니다';
+        sub = '카메라가 있는 기기에서 열어주세요';
+      }
+      camLabel.textContent = msg;
+      camSub.textContent   = sub;
+      camCopy.style.display = 'inline-block';
+    }
+  }
+
+  async function flipCamera(){
+    camFacing = (camFacing === 'environment') ? 'user' : 'environment';
+    await startCamera();
+  }
+
+  /* 초기 상태: 영화 포스터 구도 */
+  setComposition('movie');
+
+  /* 인앱 브라우저면 시작 전부터 미리 안내 */
+  if(isInAppBrowser()){
+    camSub.textContent = '인앱 브라우저 감지 — 카메라가 안 되면 Safari·Chrome로 열어주세요';
+  }
+</script>
+</body>
+</html>
