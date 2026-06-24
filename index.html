@@ -507,6 +507,43 @@
   }
   .modal-btn:hover{background:#118043;}
 
+  /* 촬영 플래시 */
+  .flash{
+    position:absolute;inset:0;background:#fff;z-index:12;
+    opacity:0;pointer-events:none;
+  }
+  .flash.fire{animation:flashFire .45s ease;}
+  @keyframes flashFire{0%{opacity:.92;}100%{opacity:0;}}
+
+  /* 촬영 결과 */
+  .result{
+    position:absolute;inset:0;z-index:22;
+    background:rgba(0,0,0,0.9);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:14px;padding:20px;
+    opacity:0;visibility:hidden;transition:opacity .25s,visibility .25s;
+  }
+  .result.open{opacity:1;visibility:visible;}
+  .result .r-title{color:#fff;font-size:15px;font-weight:700;}
+  .result img{
+    max-width:80%;max-height:50%;border-radius:14px;
+    border:2px solid rgba(255,255,255,0.25);
+    box-shadow:0 10px 30px rgba(0,0,0,0.5);
+  }
+  .result .r-btns{display:flex;flex-direction:column;gap:10px;width:82%;margin-top:4px;}
+  .r-save{
+    padding:13px;border:none;border-radius:12px;
+    background:var(--neon);color:#0a0f07;font-size:14px;font-weight:800;cursor:pointer;
+  }
+  .r-coupon{
+    padding:12px;border:none;border-radius:12px;
+    background:#159a4e;color:#fff;font-size:13.5px;font-weight:700;cursor:pointer;
+  }
+  .r-retake{
+    padding:11px;border:1px solid rgba(255,255,255,0.4);border-radius:12px;
+    background:transparent;color:#fff;font-size:13px;font-weight:600;cursor:pointer;
+  }
+
   @media (prefers-reduced-motion:reduce){
     *{transition:none !important;}
   }
@@ -548,6 +585,7 @@
       </div>
 
       <div class="toast" id="toast">셔터를 눌러보세요!</div>
+      <div class="flash" id="flash"></div>
 
       <div class="guides">
         <!-- 소실점 실선 (SVG, 비율 변경에 반응) -->
@@ -610,10 +648,21 @@
       <!-- 최하단 조작부 -->
       <div class="controls">
         <button class="ctrl-sim" onclick="adjustComposition()">구도 조절<br>(시뮬레이션)</button>
-        <button class="shutter" onclick="openModal()" aria-label="셔터"></button>
+        <button class="shutter" onclick="captureShot()" aria-label="셔터"></button>
         <button class="gallery" aria-label="갤러리">🖼️</button>
       </div>
 
+    </div>
+  </div>
+
+  <!-- 촬영 결과 -->
+  <div class="result" id="result">
+    <div class="r-title">📸 촬영 완료!</div>
+    <img id="shotImg" alt="촬영한 사진">
+    <div class="r-btns">
+      <button class="r-save" onclick="savePhoto()">📥 갤러리에 저장</button>
+      <button class="r-coupon" onclick="openCoupon()">🎉 쿠폰 확인하기</button>
+      <button class="r-retake" onclick="closeResult()">↩︎ 다시 찍기</button>
     </div>
   </div>
 
@@ -831,6 +880,75 @@
     camFacing = (camFacing === 'environment') ? 'user' : 'environment';
     await startCamera();
   }
+
+  /* ===== 사진 촬영 & 갤러리 저장 ===== */
+  let lastShotFile = null;
+  const flashEl  = document.getElementById('flash');
+  const resultEl = document.getElementById('result');
+  const shotImg  = document.getElementById('shotImg');
+  const vfEl     = document.getElementById('viewfinder');
+
+  function captureShot(){
+    // 카메라가 안 켜진 상태(폴백 이미지)면 촬영 불가 → 쿠폰 모달로
+    if(!camStream || !videoEl.videoWidth){
+      openModal();
+      return;
+    }
+    // 셔터 플래시
+    flashEl.classList.remove('fire'); void flashEl.offsetWidth; flashEl.classList.add('fire');
+
+    // 뷰파인더에 보이는 영역(cover crop) 그대로 잘라 저장
+    const vw = videoEl.videoWidth, vh = videoEl.videoHeight;
+    const targetAspect = vfEl.clientWidth / vfEl.clientHeight;
+    const videoAspect  = vw / vh;
+    let sx, sy, sw, sh;
+    if(videoAspect > targetAspect){      // 영상이 더 넓음 → 좌우 잘라냄
+      sh = vh; sw = vh * targetAspect; sx = (vw - sw)/2; sy = 0;
+    }else{                                // 영상이 더 높음 → 상하 잘라냄
+      sw = vw; sh = vw / targetAspect; sx = 0; sy = (vh - sh)/2;
+    }
+    const canvas = document.createElement('canvas');
+    canvas.width  = Math.round(sw);
+    canvas.height = Math.round(sh);
+    const ctx = canvas.getContext('2d');
+    if(camFacing === 'user'){            // 전면 카메라는 프리뷰와 동일하게 좌우반전
+      ctx.translate(canvas.width, 0); ctx.scale(-1, 1);
+    }
+    ctx.drawImage(videoEl, sx, sy, sw, sh, 0, 0, canvas.width, canvas.height);
+
+    const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
+    shotImg.src = dataUrl;
+    lastShotFile = dataURLtoFile(dataUrl, '픽스쳐_청남대_' + Date.now() + '.jpg');
+
+    setTimeout(()=>resultEl.classList.add('open'), 180);   // 플래시 후 결과 표시
+  }
+
+  function dataURLtoFile(dataurl, filename){
+    const arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1];
+    const bstr = atob(arr[1]); let n = bstr.length; const u8 = new Uint8Array(n);
+    while(n--){ u8[n] = bstr.charCodeAt(n); }
+    return new File([u8], filename, { type: mime });
+  }
+
+  async function savePhoto(){
+    if(!lastShotFile) return;
+    // 1순위: 시스템 공유시트 → "사진에 저장"(iOS)/갤러리 앱(안드로이드)
+    if(navigator.canShare && navigator.canShare({ files:[lastShotFile] })){
+      try{
+        await navigator.share({ files:[lastShotFile], title:'충청 픽스쳐' });
+        return;
+      }catch(err){ if(err && err.name === 'AbortError') return; }
+    }
+    // 폴백: 다운로드(안드로이드=다운로드 폴더→갤러리에 노출, PC=다운로드 폴더)
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(lastShotFile);
+    a.download = lastShotFile.name;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(a.href), 1000);
+  }
+
+  function closeResult(){ resultEl.classList.remove('open'); }
+  function openCoupon(){ closeResult(); openModal(); }
 
   /* 초기 상태: 영화 포스터 구도 */
   setComposition('movie');
