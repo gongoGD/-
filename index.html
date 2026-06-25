@@ -125,7 +125,8 @@
 
   /* ---------------- 미리보기 ---------------- */
   #prevScreen{background:#06080a}
-  #prevImg{position:absolute;top:0;left:0;right:0;bottom:130px;width:100%;height:calc(100% - 130px);object-fit:contain;background:#000}
+  #prevImg{position:absolute;top:0;left:0;right:0;bottom:130px;width:100%;height:calc(100% - 130px);object-fit:contain;background:#000;
+    pointer-events:auto;-webkit-touch-callout:default;-webkit-user-select:auto;user-select:auto}
   #prevInfo{position:absolute;left:0;right:0;bottom:130px;transform:translateY(-100%);
     padding:10px 16px;display:flex;justify-content:center;pointer-events:none}
   #prevInfo .tag{pointer-events:auto;display:inline-flex;align-items:center;gap:8px;
@@ -779,14 +780,35 @@ async function afterCapture(){
 $("#retakeBtn").onclick=()=> showScreen("cam");
 $("#toMapBtn").onclick=()=>{ openScreen("map"); renderMap(); };
 $("#saveBtn").onclick=()=> lastShot && savePhoto(lastShot.full);
-async function savePhoto(dataURL){
+function dataURLtoBlob(dataURL){
+  const c=dataURL.indexOf(","), head=dataURL.slice(0,c), b64=dataURL.slice(c+1);
+  const mime=(head.match(/:(.*?);/)||[])[1]||"image/jpeg";
+  const bin=atob(b64), n=bin.length, arr=new Uint8Array(n);
+  for(let i=0;i<n;i++) arr[i]=bin.charCodeAt(i);
+  return new Blob([arr],{type:mime});
+}
+// 웹은 갤러리에 직접 쓰는 API가 없음 → 모바일은 '공유 시트 → 이미지 저장'이 갤러리 저장의 유일한 정식 경로.
+// navigator.share는 반드시 탭 제스처 안에서 동기 호출해야 하므로 await/fetch 없이 처리.
+function savePhoto(dataURL){
+  let file;
+  try{ file=new File([dataURLtoBlob(dataURL)],`chungcheong-fixture-${Date.now()}.jpg`,{type:"image/jpeg"}); }
+  catch(e){ toast("저장 준비 중 오류가 발생했습니다"); return; }
+  if(navigator.canShare && navigator.canShare({files:[file]})){
+    toast("‘이미지 저장’을 선택하면 갤러리에 저장됩니다");
+    navigator.share({files:[file],title:"충청 픽스쳐",text:"충청 픽스쳐 · 대전"})
+      .catch(err=>{ if(!err || err.name!=="AbortError") downloadFile(file); });   // 취소(AbortError)면 무시, 그 외 실패는 폴백
+    return;
+  }
+  downloadFile(file);
+}
+function downloadFile(file){
   try{
-    const blob=await (await fetch(dataURL)).blob();
-    const file=new File([blob],`chungcheong-fixture-${Date.now()}.jpg`,{type:"image/jpeg"});
-    if(navigator.canShare && navigator.canShare({files:[file]})){ await navigator.share({files:[file],title:"충청 픽스쳐"}); return; }
-    const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=file.name;
-    document.body.appendChild(a); a.click(); a.remove(); toast("사진을 저장했습니다");
-  }catch(e){ toast("저장이 취소되었거나 지원되지 않습니다"); }
+    const url=URL.createObjectURL(file);
+    const a=document.createElement("a"); a.href=url; a.download=file.name;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),2000);
+  }catch(e){}
+  toast("저장이 안 되면 위 사진을 길게 눌러 ‘이미지 저장’");
 }
 
 /* ===== 퀘스트 ===== */
