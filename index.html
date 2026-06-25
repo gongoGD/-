@@ -46,7 +46,7 @@
     border:1px solid var(--line);border-radius:999px;font-size:13px;font-weight:700}
   .pill .dot{width:8px;height:8px;border-radius:50%;background:var(--muted)}
   .pill .dot.live{background:var(--good);box-shadow:0 0 0 4px rgba(54,211,153,.18)}
-  .topRight{display:flex;gap:8px;align-items:center}
+  .topRight{display:flex;gap:6px;align-items:center}
   .chip{height:36px;padding:0 13px;border-radius:999px;border:1px solid var(--line);
     background:var(--glass);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
     color:var(--muted);font-size:12.5px;font-weight:800;cursor:pointer}
@@ -210,6 +210,63 @@
     opacity:0;transition:.3s;pointer-events:none;max-width:86vw;text-align:center}
   .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 
+  /* ===== 촬영 구도 가이드 ===== */
+  #guideLayer{position:absolute;inset:0;z-index:20;pointer-events:none}
+  #guideLayer.off{display:none}
+  #guideGrid{position:absolute;inset:0;width:100%;height:100%}
+  #guideGrid line{stroke:rgba(255,255,255,.30);stroke-width:.22}
+  #guideGrid .zone{fill:rgba(255,194,75,.15);stroke:rgba(255,194,75,.92);stroke-width:.5;stroke-dasharray:2 1.6}
+  #guideGrid .pt{fill:none;stroke:#ffc24b;stroke-width:.7}
+  #guideGrid .ln{stroke:#ffc24b;stroke-width:.55;stroke-dasharray:2.2 1.4}
+  #levelLine{position:absolute;left:50%;top:50%;width:56%;height:2px;transform:translate(-50%,-50%);display:none}
+  #guideLayer.sensor #levelLine{display:block}
+  #levelLine .ll-ref{position:absolute;inset:0;background:rgba(255,255,255,.26);border-radius:2px}
+  #levelLine .ll-bar{position:absolute;inset:0;background:#ffc24b;border-radius:2px;transform-origin:center;transition:background .15s}
+  #levelLine.ok .ll-bar{background:var(--good);box-shadow:0 0 8px rgba(54,211,153,.7)}
+  #levelLine .ll-bar::before,#levelLine .ll-bar::after{content:"";position:absolute;top:50%;width:7px;height:7px;border-radius:50%;background:inherit;transform:translateY(-50%)}
+  #levelLine .ll-bar::before{left:-4px}
+  #levelLine .ll-bar::after{right:-4px}
+  #guideTip{position:absolute;left:50%;top:calc(env(safe-area-inset-top) + 58px);transform:translateX(-50%);
+    pointer-events:auto;max-width:90vw;text-align:center;cursor:pointer;
+    background:var(--glass);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+    border:1px solid var(--line);border-radius:14px;padding:8px 14px;font-size:12.5px;font-weight:700;line-height:1.5}
+  #guideTip b{color:var(--accent2)}
+  #guideTip .lm{display:block;color:var(--accent2);font-weight:800;margin-bottom:2px}
+  #guideTip .stand{display:block;color:var(--good);font-weight:800;margin-top:3px}
+  #guideTip .cyc{display:block;font-size:10px;color:var(--muted);font-weight:600;margin-top:3px}
+  #personGuide{position:absolute;transform:translate(-50%,-100%);pointer-events:none;text-align:center}
+  #personGuide .fig{display:block;height:var(--ph,320px);width:auto;
+    fill:rgba(255,255,255,.15);stroke:rgba(54,211,153,.92);stroke-width:1.3;stroke-dasharray:4 3;
+    filter:drop-shadow(0 1px 6px rgba(0,0,0,.5))}
+  #personGuide .gline{position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:62%;border-top:2px dashed rgba(54,211,153,.9)}
+  #personGuide .ptag{position:absolute;left:50%;top:0;transform:translate(-50%,-120%);white-space:nowrap;
+    font-size:11px;font-weight:800;color:#04130d;background:var(--good);border-radius:8px;padding:2px 8px}
+  #coach{position:absolute;left:50%;bottom:calc(env(safe-area-inset-bottom) + 112px);transform:translateX(-50%);z-index:25;
+    display:none;align-items:center;gap:8px;pointer-events:none;text-align:center;
+    background:rgba(20,24,30,.92);border:1px solid var(--line);border-radius:18px;
+    padding:9px 16px;font-size:13.5px;font-weight:800;max-width:88vw;transition:background .2s,color .2s}
+  #coach.on{display:inline-flex}
+  #coach.ok{background:rgba(54,211,153,.94);color:#04130d;border-color:transparent}
+  .iconbtn.act{background:rgba(255,194,75,.2);border-color:rgba(255,194,75,.55);color:var(--accent2)}
+  /* 구도 가이드 명소 선택 패널 */
+  #guidePickerWrap{position:absolute;left:0;right:0;bottom:0;z-index:55;
+    transform:translateY(110%);transition:transform .28s cubic-bezier(.2,.7,.2,1)}
+  #guidePickerWrap.on{transform:translateY(0)}
+  #guidePicker{background:rgba(16,19,24,.95);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+    border-top:1px solid var(--line);border-radius:22px 22px 0 0;
+    padding:14px 16px calc(env(safe-area-inset-bottom) + 16px)}
+  .ghostbtn{height:30px;padding:0 12px;border-radius:999px;border:1px solid var(--line);
+    background:rgba(255,255,255,.05);color:var(--muted);font-size:12px;font-weight:800;cursor:pointer}
+  .gpList{display:flex;flex-direction:column;gap:8px;max-height:46vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .gpItem{display:flex;align-items:center;justify-content:space-between;width:100%;
+    padding:13px 15px;border-radius:13px;border:1px solid var(--line);background:rgba(255,255,255,.05);
+    color:var(--ink);font-size:14px;font-weight:700;cursor:pointer;touch-action:manipulation}
+  .gpItem:active{background:rgba(255,255,255,.12)}
+  .gpItem.cur{border-color:var(--good);background:rgba(54,211,153,.14)}
+  .gpItem .gp-o{font-size:11.5px;font-weight:800;color:var(--accent2);
+    border:1px solid rgba(255,194,75,.4);border-radius:999px;padding:2px 9px}
+  .gpItem.cur .gp-o{color:var(--good);border-color:rgba(54,211,153,.5)}
+
   /* ===== 모바일 반응형 ===== */
   @media (max-width:380px){
     #mapStage{padding:170px 12px 84px}
@@ -242,11 +299,23 @@
   <section id="camScreen" class="screen on">
     <video id="camera" playsinline autoplay muted></video>
     <div id="stickerLayer"></div>
+    <div id="guideLayer" class="off">
+      <svg id="guideGrid" viewBox="0 0 100 100" preserveAspectRatio="none"></svg>
+      <div id="levelLine"><span class="ll-ref"></span><span class="ll-bar"></span></div>
+      <div id="personGuide">
+        <svg class="fig" viewBox="0 0 60 150" preserveAspectRatio="xMidYMax meet" aria-hidden="true"><circle cx="30" cy="17" r="13"/><path d="M30 30C20 30 15 36 15 46L15 82 L17 146 L25 146 L28 92 L32 92 L35 146 L43 146 L45 82 L45 46C45 36 40 30 30 30 Z"/></svg>
+        <div class="gline"></div>
+        <div class="ptag" id="ptag">여기에 서기</div>
+      </div>
+      <div id="guideTip"></div>
+    </div>
+    <div id="coach"></div>
     <div class="flash" id="flash"></div>
 
     <div id="topBar">
       <div class="pill"><span class="dot" id="liveDot"></span><span>대전</span></div>
       <div class="topRight">
+        <button class="iconbtn" id="guideBtn" title="구도 가이드">📐</button>
         <button class="chip" id="demoChip">데모</button>
         <button class="iconbtn" id="flipBtn" title="전/후면">⟲</button>
         <button class="iconbtn" id="clearBtn" title="스티커 지우기">⌫</button>
@@ -276,6 +345,13 @@
       <div id="picker">
         <div class="pickHead"><h3>대전 스티커</h3><small>탭하여 추가 · 중복 가능 · 모서리로 크기/회전</small></div>
         <div class="pickGrid" id="pickGrid"></div>
+      </div>
+    </div>
+
+    <div id="guidePickerWrap">
+      <div id="guidePicker">
+        <div class="pickHead"><h3>구도 가이드 · 명소 선택</h3><button id="guideOffBtn" class="ghostbtn">가이드 끄기</button></div>
+        <div class="gpList" id="gpList"></div>
       </div>
     </div>
 
@@ -382,6 +458,20 @@ const SPOTS = [
   { id:"yuseong",  name:"유성온천",       lat:36.3540, lng:127.3360 },
 ];
 const NEAR_M = 5000; // 자동 인증 반경(5km)
+
+// 명소별 추천 구도 — o:방향, type:tall/wide/subject, pitch:권장 상하각, px:사람 좌우 위치%, stand:사람 위치 라벨 (모두 추정 휴리스틱)
+const COMPOS = {
+  hanbit:    { o:"세로", type:"tall",    pitch:96, px:30, tip:"탑을 오른쪽 세로선에, 꼭대기를 위 1/3 지점에", stand:"왼쪽 앞 1/3 지점" },
+  sungsim:   { o:"가로", type:"subject", pitch:84, px:40, tip:"빵·간판을 중앙에 두고 살짝 위에서 담기", stand:"빵 옆, 앞쪽 중앙" },
+  ballpark:  { o:"가로", type:"wide",    pitch:92, px:70, tip:"구장을 아래 2/3, 하늘·조명을 위 1/3에", stand:"오른쪽 앞 1/3 지점" },
+  oworld:    { o:"가로", type:"wide",    pitch:90, px:32, tip:"지평선을 아래 1/3 선에 맞춰 넓게", stand:"왼쪽 앞 1/3 지점" },
+  skyroad:   { o:"세로", type:"tall",    pitch:98, px:38, tip:"아케이드를 중앙 소실점으로, 천장까지 세로로", stand:"중앙 약간 왼쪽, 앞" },
+  daecheong: { o:"가로", type:"wide",    pitch:90, px:33, tip:"수평선을 위 1/3 선에 — 잔잔한 물 강조", stand:"왼쪽 앞 1/3 지점" },
+  jangtae:   { o:"세로", type:"tall",    pitch:94, px:50, tip:"메타세쿼이아 길을 좌우 대칭, 길은 중앙으로", stand:"길 가운데, 앞쪽" },
+  gyejok:    { o:"가로", type:"wide",    pitch:88, px:68, tip:"황톳길을 대각선으로 살려 담기", stand:"오른쪽 앞 1/3 지점" },
+  ppuri:     { o:"가로", type:"wide",    pitch:90, px:32, tip:"조형물을 아래 2/3, 하늘을 위 1/3에", stand:"왼쪽 앞 1/3 지점" },
+  yuseong:   { o:"가로", type:"subject", pitch:88, px:40, tip:"표지·온천을 정면 중앙에 또렷하게", stand:"표지 옆, 정면" },
+};
 
 /* ===== 상태 ===== */
 let stream=null, facing="environment", demo=false;
@@ -507,8 +597,105 @@ function bindSticker(inst){
   el.querySelector(".h-tl").addEventListener("pointerdown",e=>{ e.preventDefault(); e.stopPropagation(); removeSticker(inst); });
 }
 layer.addEventListener("pointerdown",e=>{ if(e.target===layer) select(null); });
-$("#stickerBtn").onclick=()=> $("#pickerWrap").classList.toggle("on");
+$("#stickerBtn").onclick=()=>{ $("#guidePickerWrap").classList.remove("on"); $("#pickerWrap").classList.toggle("on"); };
 $("#clearBtn").onclick=()=>{ placed.slice().forEach(removeSticker); toast("스티커를 모두 지웠습니다"); };
+
+/* ===== 촬영 구도 가이드 ===== */
+let guideOn=false, guideIdx=0, sensorOn=false;
+let orient={beta:90,gamma:0,active:false};
+const FOOT_Y=90;          // 사람 발 위치(화면 상단 기준 %)
+const PERSON_RATIO=0.56;  // 사람 실루엣 높이 = 화면 높이의 비율(전신)
+
+function renderGhost(){
+  const spot=SPOTS[guideIdx], c=COMPOS[spot.id]||{o:"가로",type:"wide",pitch:90,px:50,tip:"주제를 삼분할 교차점에",stand:"앞쪽 1/3 지점"};
+  let g=`<line x1="33.3" y1="0" x2="33.3" y2="100"/><line x1="66.6" y1="0" x2="66.6" y2="100"/>`
+       +`<line x1="0" y1="33.3" x2="100" y2="33.3"/><line x1="0" y1="66.6" x2="100" y2="66.6"/>`;
+  if(c.type==="tall"){
+    g+=`<rect class="zone" x="55" y="8" width="23" height="86" rx="2"/><circle class="pt" cx="66.6" cy="33.3" r="3.4"/>`;
+  } else if(c.type==="wide"){
+    const y=(spot.id==="daecheong")?33.3:66.6;
+    g+=`<line class="ln" x1="0" y1="${y}" x2="100" y2="${y}"/><rect class="zone" x="6" y="${y-2}" width="88" height="4" rx="1.5"/>`;
+  } else {
+    g+=`<rect class="zone" x="30" y="28" width="40" height="44" rx="3"/><circle class="pt" cx="50" cy="50" r="2.2"/>`;
+  }
+  $("#guideGrid").innerHTML=g;
+  // 사람(피사체) 실루엣 — 전신 크기, 반투명. 실제 인물을 이 안에 맞춰 촬영.
+  const pg=$("#personGuide");
+  const lh=$("#guideLayer").clientHeight||window.innerHeight||700;
+  pg.style.setProperty("--ph", Math.round(lh*PERSON_RATIO)+"px");
+  pg.style.left=(c.px!=null?c.px:50)+"%"; pg.style.top=FOOT_Y+"%";
+  $("#ptag").textContent="📍 여기에 서기";
+  // 팁: 명소 구도 + 사람 위치
+  $("#guideTip").innerHTML=`<span class="lm">📷 ${spot.name} · ${c.o}</span>${c.tip}`
+    +`<span class="stand">🧍 사람: ${c.stand}</span>`
+    +`<span class="cyc">탭하여 명소 변경</span>`;
+}
+function onOrient(e){
+  if(e.gamma==null && e.beta==null) return;
+  orient.gamma=e.gamma||0; orient.beta=(e.beta==null?90:e.beta); orient.active=true;
+  $("#guideLayer").classList.add("sensor");
+  updateCoach();
+}
+async function enableSensors(){
+  if(sensorOn) return true;
+  try{
+    const DE=window.DeviceOrientationEvent;
+    if(DE && typeof DE.requestPermission==="function"){
+      const r=await DE.requestPermission(); if(r!=="granted") return false;
+    }
+    window.addEventListener("deviceorientation", onOrient, true);
+    sensorOn=true; return true;
+  }catch(e){ return false; }
+}
+function updateCoach(){
+  if(!guideOn) return;
+  const c=$("#coach");
+  if(!orient.active){ c.classList.remove("on","ok"); return; }   // 센서 없으면 코치 숨김(촬영 화면 방해 방지)
+  c.classList.add("on");
+  const ll=$("#levelLine"), g=orient.gamma;
+  ll.querySelector(".ll-bar").style.transform=`rotate(${Math.max(-45,Math.min(45,g))}deg)`;
+  const level=Math.abs(g)<=2.5; ll.classList.toggle("ok",level);
+  const spot=SPOTS[guideIdx], rec=(COMPOS[spot.id]?COMPOS[spot.id].pitch:90), b=orient.beta;
+  let msg,ok=false;
+  if(!level){ msg="📐 수평을 맞춰주세요"; }
+  else if(b<rec-8){ msg="📈 카메라를 조금 위로"; }
+  else if(b>rec+8){ msg="📉 카메라를 조금 아래로"; }
+  else { msg="👍 좋은 구도! 지금 촬영하세요"; ok=true; }
+  c.textContent=msg; c.classList.toggle("ok",ok);
+}
+// 명소 목록 패널
+function buildGuideList(){
+  const wrap=$("#gpList"); wrap.innerHTML="";
+  SPOTS.forEach((s,i)=>{
+    const c=COMPOS[s.id]||{o:"가로"};
+    const b=document.createElement("button");
+    b.className="gpItem"+(guideOn&&i===guideIdx?" cur":"");
+    b.innerHTML=`<span class="gp-n">${i+1}. ${s.name}</span><span class="gp-o">${c.o}</span>`;
+    b.onclick=()=>selectGuide(i);
+    wrap.appendChild(b);
+  });
+}
+function openGuidePicker(){ buildGuideList(); $("#pickerWrap").classList.remove("on"); $("#guidePickerWrap").classList.add("on"); }
+function closeGuidePicker(){ $("#guidePickerWrap").classList.remove("on"); }
+async function selectGuide(i){
+  guideIdx=i; guideOn=true;
+  $("#guideLayer").classList.remove("off");
+  $("#guideBtn").classList.add("act");
+  closeGuidePicker();
+  renderGhost();
+  const ok=await enableSensors();
+  if(ok) updateCoach(); else $("#coach").classList.remove("on");
+}
+function guideOff(){
+  guideOn=false;
+  $("#guideLayer").classList.add("off");
+  $("#coach").classList.remove("on","ok");
+  $("#guideBtn").classList.remove("act");
+  closeGuidePicker();
+}
+$("#guideBtn").onclick=()=>{ $("#guidePickerWrap").classList.contains("on") ? closeGuidePicker() : openGuidePicker(); };
+$("#guideTip").onclick=openGuidePicker;
+$("#guideOffBtn").onclick=guideOff;
 
 /* ===== 촬영 (비디오 + 스티커 합성) ===== */
 function drawCover(ctx,img,w,h){
@@ -573,7 +760,7 @@ $("#shutter").onclick=async()=>{
 };
 async function afterCapture(){
   const tag=$("#prevTag");
-  if(demo){ tag.className="tag"; tag.textContent="데모 모드 · [지도 보기]에서 명소를 탭해 등록"; return; }
+  if(demo){ tag.className="tag"; tag.textContent="데모 모드 · [지도 보기]에서 액자 탭=첨부 / 다시 탭=삭제"; return; }
   tag.className="tag"; tag.textContent="📍 위치 확인 중…";
   try{
     const c=await getPos();
@@ -613,6 +800,11 @@ function registerSpot(spotId,thumb){
   toast(isNew? `✅ ${s.name} 인증! (${doneCount()}/10)` : `${s.name} 사진을 갱신했습니다`);
   if(doneCount()>=10) setTimeout(openCoupon,700);
 }
+function unregisterSpot(spotId){
+  const s=SPOTS.find(x=>x.id===spotId); if(!s||!quest[spotId]) return;
+  delete quest[spotId]; saveQuest(); updateBadges();   // 게이지·카운트·뱃지·쿠폰버튼 동기 갱신
+  toast(`🗑 ${s.name} 사진을 삭제했습니다 (${doneCount()}/10)`);
+}
 function spotLayout(W,H){
   const lats=SPOTS.map(s=>s.lat), lngs=SPOTS.map(s=>s.lng);
   const minLa=Math.min(...lats),maxLa=Math.max(...lats),minLn=Math.min(...lngs),maxLn=Math.max(...lngs);
@@ -644,14 +836,17 @@ function renderMap(){
     const inside=quest[s.id]? `<img src="${quest[s.id].thumb}" alt="">` : `<span class="ph">${i+1}</span>`;
     el.innerHTML=`<div class="frame"><span class="num">${i+1}</span>${inside}<span class="chk">✓</span></div><div class="name">${s.name}</div>`;
     el.onclick=()=>{
-      if(demo && lastShot){ registerSpot(s.id,lastShot.thumb); renderMap(); }
-      else if(demo){ toast("먼저 촬영하세요 (카메라)"); }
+      if(demo){
+        if(quest[s.id]){ unregisterSpot(s.id); renderMap(); }            // 두 번째 탭 → 사진 삭제
+        else if(lastShot){ registerSpot(s.id,lastShot.thumb); renderMap(); } // 첫 탭 → 사진 첨부
+        else { toast("먼저 촬영하세요 (카메라)"); }
+      }
       else if(quest[s.id]){ toast(`${s.name} · 인증 완료`); }
       else { toast(`${s.name} 5km 이내에서 촬영하면 채워집니다`); }
     };
     inner.appendChild(el);
   });
-  $("#mapSub").textContent = demo ? "데모 모드 · 명소를 탭하면 최근 사진이 등록됩니다"
+  $("#mapSub").textContent = demo ? "데모 모드 · 액자 탭 = 사진 첨부 · 한 번 더 탭 = 삭제"
                                   : "명소 5km 이내에서 촬영하면 액자가 자동으로 채워집니다";
   const n=doneCount();
   $("#progFill").style.width=(n/10*100)+"%"; $("#doneN").textContent=n;
@@ -674,7 +869,7 @@ $("#couponSave").onclick=()=> toast("스크린샷으로 쿠폰을 보관하세�
 /* ===== 데모 토글 ===== */
 $("#demoChip").onclick=()=>{ demo=!demo; document.body.classList.toggle("demo",demo);
   $("#demoChip").textContent=demo?"데모 ON":"데모";
-  toast(demo? "데모 모드 ON · 지도에서 명소 탭으로 등록" : "데모 모드 OFF · GPS 자동 등록");
+  toast(demo? "데모 모드 ON · 액자 탭=첨부 / 다시 탭=삭제" : "데모 모드 OFF · GPS 자동 등록");
   if(screens.map.classList.contains("on")) renderMap(); };
 
 /* ===== 기기 뒤로가기 ===== */
